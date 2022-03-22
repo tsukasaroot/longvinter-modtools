@@ -1,0 +1,11 @@
+{
+  "name": "Hunter",
+  "author": "Tsukasaroot",
+  "description": "Helps to track players on map!",
+  "version": "1.0",
+  "options": {
+    "guiName": "Minimap"
+  },
+  "servers": ["https://raw.githubusercontent.com/Kerryu/minimap/master/"],
+  "conflicts": ["swim-fix", "chat-sanitizer"]
+}
