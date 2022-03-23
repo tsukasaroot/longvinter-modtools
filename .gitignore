@@ -130,7 +130,5 @@ dist
 .idea/misc.xml
 .idea/modules.xml
 .idea/vcs.xml
-electron-builder.yml
-electron-builder.yml
 package-lock.json
 dev-app-update.yml
