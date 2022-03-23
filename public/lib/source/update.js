@@ -1,3 +1,4 @@
-function update(mod_name) {
-    console.log(mod_name + ' updating!');
+function update(mod_name, t) {
+    t.onclick = null;
+    t.innerHTML = '<i style="display: block" class="fa fa-refresh fa-spin"></i>';
 }

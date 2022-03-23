@@ -14,7 +14,7 @@ function check_local_mod_versions(mods_list) {
                 let cell = document.createElement('td');
                 let button = document.createElement('button');
 
-                button.onclick = function() { update(mod.name.toLowerCase()) };
+                button.onclick = function() { update(mod.name.toLowerCase(), this) };
                 button.innerHTML = '<i class="fa fa-cloud-download" aria-hidden="true"></i> ' + remote_version;
                 button.style.border = 'none';
                 button.style.color = 'white';
