@@ -1,4 +1,3 @@
-const { ipcRenderer } = require('electron');
 const version = document.getElementById('version');
 
 ipcRenderer.send('app_version');
@@ -11,7 +10,8 @@ const notification = document.getElementById('notification');
 
 const message = document.getElementById('message');
 
-const restartButton = document.getElementById('restart-button');ipcRenderer.on('update_available', () => {
+const restartButton = document.getElementById('restart-button');
+ipcRenderer.on('update_available', () => {
     ipcRenderer.removeAllListeners('update_available');
     message.innerText = 'A new update is available. Downloading now...';
     notification.classList.remove('hidden');

@@ -5,8 +5,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Longvinter Modtools</title>
-    <script src="lib/mod_parser.js"></script>
-    <script src="lib/menu.js"></script>
+
+    <script>
+        const {ipcRenderer} = require('electron');
+        ipcRenderer.send('ispackaged');
+
+        ipcRenderer.on('ispackaged', (event, args) => {
+            if (args) {
+                let all = document.createElement('script');
+                all.setAttribute('src', 'lib/all.min.js');
+
+                document.head.appendChild(all);
+            } else {
+                let init = document.createElement('script');
+                init.setAttribute('src', 'lib/source/init.js');
+
+                let fetch = document.createElement('script');
+                fetch.setAttribute('src', 'lib/source/fetch.js');
+
+                /*let menu = document.createElement('script');
+                menu.setAttribute('src', 'lib/source/menu.js');*/
+
+                let mod_parser = document.createElement('script');
+                mod_parser.setAttribute('src', 'lib/source/mod-parser.js');
+
+                let self_update = document.createElement('script');
+                self_update.setAttribute('src', 'lib/source/self-update.js');
+
+                document.head.appendChild(init);
+                document.head.appendChild(fetch);
+                //document.head.appendChild(menu);
+                document.head.appendChild(mod_parser);
+                document.head.appendChild(self_update);
+            }
+        });
+    </script>
+    <script src="lib/source/menu.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
           integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"
@@ -21,8 +55,12 @@
     <h1 class="text-center">Longvinter mods manager</h1>
 
     <ul class="nav nav-tabs bg-dark">
-        <li class="nav-item"><button class="nav-link active" onclick="openTab('mods-installed', this)">Installed mods</button></li>
-        <li class="nav-item"><button class="nav-link" onclick="openTab('mods-remote', this)">Available mods</button></li>
+        <li class="nav-item">
+            <button class="nav-link active" onclick="openTab('mods-installed', this)">Installed mods</button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link" onclick="openTab('mods-remote', this)">Available mods</button>
+        </li>
     </ul>
 
     <div id="mods-installed" class="tabs">
@@ -89,7 +127,6 @@
             <a href="https://www.github.com/Tsukasaroot" target="_blank" rel="noopener noreferrer">Tsukasaroot</a>
         </div>
     </footer>
-    <script src="lib/self-update.js"></script>
 </body>
 </html>
 

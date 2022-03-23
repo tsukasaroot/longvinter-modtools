@@ -1,5 +1,7 @@
 appId: digitalsavior.fr.modtools
 copyright: Tsukasaroot
+files:
+  "!public/lib/source${/*}"
 nsis:
   oneClick: false
   allowToChangeInstallationDirectory: true

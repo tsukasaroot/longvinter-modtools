@@ -8,6 +8,7 @@
   },
   "main": "main.js",
   "scripts": {
+    "uglify": "uglifyjs-folder ./public/lib/ -o public/lib/all.min.js",
     "start": "electron .",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "electron-builder build --win --publish never",
@@ -27,7 +28,9 @@
     "node": ">=11.4.0"
   },
   "devDependencies": {
+    "del-cli": "^4.0.1",
     "electron": "^17.1.2",
-    "electron-builder": "^22.14.13"
+    "electron-builder": "^22.14.13",
+    "uglifyjs-folder": "^3.0.0"
   }
 }

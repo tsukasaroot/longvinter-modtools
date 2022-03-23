@@ -76,6 +76,10 @@ const loadMainWindow = () => {
     autoUpdater.on('update-downloaded', () => {
         mainWindow.webContents.send('update_downloaded');
     });
+
+    ipcMain.on('ispackaged', () => {
+        mainWindow.webContents.send('ispackaged', app.isPackaged);
+    })
 }
 
 app.disableHardwareAcceleration()
