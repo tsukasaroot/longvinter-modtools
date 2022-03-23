@@ -88,9 +88,10 @@ const loadMainWindow = () => {
 }
 
 async function retrieval(args) {
-    let updater = new Updater(JSON.parse(args).servers[0] + 'manifest.json');
+    args = JSON.parse(args);
+    let updater = new Updater(args.servers[0]);
     let manifest = await updater.getManifest();
-    await updater.downloadManifestFiles(manifest);
+    await updater.downloadManifestFiles(args.name.toLowerCase(), manifest.files);
 }
 
 app.disableHardwareAcceleration()
