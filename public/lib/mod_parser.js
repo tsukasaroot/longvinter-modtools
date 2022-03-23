@@ -11,7 +11,7 @@ window.onload = function () {
     parse_remote_mods(remote_mods_list);
 
     document.getElementById('version').innerText = ver;
-    openTab('mods-installed')
+    openTab('mods-installed', document.getElementsByClassName('nav-item')[0].childNodes[0]);
 }
 
 function parse_remote_mods(remote_mods_list) {
