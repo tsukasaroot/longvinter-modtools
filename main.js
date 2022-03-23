@@ -4,6 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const fetch = require('node-fetch');
 const {autoUpdater} = require('electron-updater');
+const {Updater} = require('./lib/Updater');
 
 function getDirectories(path, callback) {
     fs.readdir(path, function (err, content) {
@@ -80,6 +81,16 @@ const loadMainWindow = () => {
     ipcMain.on('ispackaged', () => {
         mainWindow.webContents.send('ispackaged', app.isPackaged);
     })
+
+    ipcMain.on('update', (event, args) => {
+        retrieval(args);
+    })
+}
+
+async function retrieval(args) {
+    let updater = new Updater(JSON.parse(args).servers[0] + 'manifest.json');
+    let manifest = await updater.getManifest();
+    await updater.downloadManifestFiles(manifest);
 }
 
 app.disableHardwareAcceleration()
