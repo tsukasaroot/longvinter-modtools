@@ -4,7 +4,9 @@ const path = require('path');
 const fs = require('fs');
 const fetch = require('node-fetch');
 const {autoUpdater} = require('electron-updater');
-const {Updater} = require('./lib/Updater');
+const {Updater} = require('./lib/updater');
+
+const mod_path = '../Longvinter/Content/CoreMods/';
 
 function getDirectories(path, callback) {
     fs.readdir(path, function (err, content) {
@@ -62,7 +64,7 @@ const loadMainWindow = () => {
 
     getResponse('https://raw.githubusercontent.com/tsukasaroot/longvinter-mods/main/modules-list.json')
         .then(remote_mods_list => {
-            scanDirectories(mainWindow, remote_mods_list, '../mods/');
+            scanDirectories(mainWindow, remote_mods_list, mod_path);
         });
 
     mainWindow.once('ready-to-show', () => {
