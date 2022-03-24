@@ -81,10 +81,6 @@ const loadMainWindow = () => {
     ipcMain.on('ispackaged', () => {
         mainWindow.webContents.send('ispackaged', app.isPackaged);
     })
-
-    ipcMain.on('update', (event, args) => {
-        retrieval(args);
-    })
 }
 
 async function retrieval(args) {
@@ -113,3 +109,8 @@ app.on("activate", () => {
 ipcMain.on('restart_app', () => {
     autoUpdater.quitAndInstall();
 });
+
+ipcMain.on('update', async (event, args) => {
+    await retrieval(args);
+    event.reply('update');
+})
