@@ -3,6 +3,7 @@ copyright: Tsukasaroot
 files:
   "!public/lib/source${/*}"
 nsis:
+  createStartMenuShortcut: true
   oneClick: false
   allowToChangeInstallationDirectory: true
 publish:
