@@ -6,11 +6,11 @@ function add_download_button(mod_name, row, is_remote) {
 
     if (is_remote)
         button.onclick = () => {
-            install(mod_name.toLowerCase(), button)
+            install(mod_name.toLowerCase(), button);
         };
     else
         button.onclick = () => {
-            update(mod_name.toLowerCase(), button)
+            update(mod_name.toLowerCase(), button);
         };
 
     button.innerHTML = '<i class="fa fa-cloud-download"></i>';
@@ -40,7 +40,7 @@ function check_local_mod_versions(mods_list) {
 }
 
 function create_table(table, key, value, is_remote) {
-    let row = table.insertRow(1);
+    let row = table.insertRow(0);
 
     row.id = value.name.toLowerCase();
 
@@ -72,25 +72,23 @@ function find_mod_in_list(haystack, list) {
 }
 
 async function parse_remote_mods(mods_list, remote_mods_list) {
-    const table = document.getElementById('remote-mods-list');
+    const table = document.getElementById('remote-mods-list').getElementsByTagName('tbody')[0];
     let counter = 0;
 
     for (let [key, url] of Object.entries(remote_mods_list)) {
         let mod = await httpGet(url)
-        let counter = 0;
         if (find_mod_in_list(key, mods_list)) {
             create_table(table, key, mod, true);
         } else {
             counter++;
         }
         storage.setItem(key.toLowerCase(), JSON.stringify(mod));
-
     }
     document.getElementById('remote-mods-count').innerHTML += Object.keys(remote_mods_list).length - counter;
 }
 
 function parse_mods(mods_list) {
-    const table = document.getElementById('mods-list');
+    const table = document.getElementById('mods-list').getElementsByTagName('tbody')[0];
 
     document.getElementById('mods-count').innerHTML += mods_list.length;
 

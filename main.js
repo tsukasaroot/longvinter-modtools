@@ -118,5 +118,5 @@ ipcMain.on('update', async (event, args) => {
 
 ipcMain.on('install', async (event, args) => {
     await retrieval(args);
-    event.reply('install');
+    event.reply('install', args);
 })
