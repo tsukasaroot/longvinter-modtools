@@ -9,5 +9,6 @@ First release is done, but there's more to come !
   - Deleting mods
   - Checksum of updates / installations of mods to prevent any corrupted files
   - Auto installation and updates of unrealMods
+  - Being able to install modtools anywhere and give the Longvinter installation path
 
 ![alt text](https://github.com/tsukasaroot/longvinter-modtools/blob/master/readme-pics/img.png?raw=true)
