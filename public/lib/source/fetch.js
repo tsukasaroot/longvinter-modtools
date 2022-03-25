@@ -1,3 +1,5 @@
+const fetch = require("node-fetch");
+
 function httpPostAsync(params, theUrl, csrf, callback) {
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.open('POST', theUrl, true);
@@ -13,6 +15,18 @@ function httpPostAsync(params, theUrl, csrf, callback) {
     if (csrf !== null)
         xmlHttp.setRequestHeader("X-CSRF-TOKEN", csrf);
     xmlHttp.send(params);
+}
+
+async function httpGet(url) {
+        let settings = {
+            method: "GET",
+            headers: {
+                Accept: "application/json; charset=UTF-8",
+            }
+        };
+
+        const response = await fetch(url, settings);
+        return await response.json();
 }
 
 function httpGetAsync(theUrl, callback) {

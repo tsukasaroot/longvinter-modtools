@@ -17,14 +17,17 @@
 
                 document.head.appendChild(all);
             } else {
-                let init = document.createElement('script');
-                init.setAttribute('src', 'lib/source/init.js');
-
                 let fetch = document.createElement('script');
                 fetch.setAttribute('src', 'lib/source/fetch.js');
 
                 let menu = document.createElement('script');
                 menu.setAttribute('src', 'lib/source/menu.js');
+
+                let install = document.createElement('script');
+                install.setAttribute('src', 'lib/source/install.js');
+
+                let update = document.createElement('script');
+                update.setAttribute('src', 'lib/source/update.js');
 
                 let mod_parser = document.createElement('script');
                 mod_parser.setAttribute('src', 'lib/source/mod-parser.js');
@@ -32,15 +35,16 @@
                 let self_update = document.createElement('script');
                 self_update.setAttribute('src', 'lib/source/self-update.js');
 
-                let update = document.createElement('script');
-                update.setAttribute('src', 'lib/source/update.js');
+                let init = document.createElement('script');
+                init.setAttribute('src', 'lib/source/init.js');
 
-                document.head.appendChild(init);
+                document.head.appendChild(update);
+                document.head.appendChild(install);
                 document.head.appendChild(fetch);
                 document.head.appendChild(menu);
-                document.head.appendChild(mod_parser);
                 document.head.appendChild(self_update);
-                document.head.appendChild(update);
+                document.head.appendChild(mod_parser);
+                document.head.appendChild(init);
             }
         });
     </script>
