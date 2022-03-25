@@ -113,7 +113,7 @@ ipcMain.on('restart_app', () => {
 
 ipcMain.on('update', async (event, args) => {
     await retrieval(args);
-    event.reply('update');
+    event.reply('update', args);
 })
 
 ipcMain.on('install', async (event, args) => {
