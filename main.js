@@ -68,6 +68,7 @@ const loadMainWindow = () => {
         });
 
     mainWindow.once('ready-to-show', () => {
+        autoUpdater.checkForUpdates();
         autoUpdater.checkForUpdatesAndNotify();
     });
 
