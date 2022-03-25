@@ -10,6 +10,7 @@ First release is done, but there's more to come !
   - Checksum of updates / installations of mods to prevent any corrupted files
   - Auto installation and updates of unrealMods
   - Being able to install modtools anywhere and give the Longvinter installation path
+  - Searchbar to look for available mods based on keywords
 
 Mods that uses resources (Like minimap which load maps from .png) needs some extrawork from creator to handle subfolders in CoreMods folder as mods files are contain in mod_name/mod_files.
 
