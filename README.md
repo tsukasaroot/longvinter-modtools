@@ -1,7 +1,7 @@
 # longvinter-modtools
 Application to automatically install and handle updates of mods
 
-Doc to come when stable release will be done
+Doc to come when stable release will be done (selfupdate functionality is broken)
 
 Install the software in : steamapps\Longvinter
 
