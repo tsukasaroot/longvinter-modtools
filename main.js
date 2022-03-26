@@ -58,7 +58,6 @@ const loadMainWindow = () => {
             contextIsolation: false,
             enableRemoteModule: true,
         },
-        resizable: false,
         autoHideMenuBar: true,
     });
 
