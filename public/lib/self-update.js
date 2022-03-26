@@ -1,3 +1,8 @@
+/*
+* Manage the app's front-end self-update
+* Based on ipc communication between main thread and renderer to display popups
+ */
+
 const v = document.getElementById('version');
 
 ipcRenderer.send('app_version');

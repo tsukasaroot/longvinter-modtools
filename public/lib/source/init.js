@@ -6,6 +6,10 @@ let ver = query['version'];
 
 window.jQuery = require('jquery')
 
+/*
+* Load all needed functions to parse and check remotely available mods and versions
+ */
+
 window.onload = async function () {
     storage.clear();
 

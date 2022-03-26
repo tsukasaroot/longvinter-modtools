@@ -1,9 +1,20 @@
+/*
+* Activate loading FA then send mod informations through storage with mod's name to main process
+ */
+
 function install(mod_name, t) {
     t.onclick = null;
     t.innerHTML = '<i style="display: block" class="fa fa-refresh fa-spin"></i>';
 
     ipcRenderer.send('install', storage.getItem(mod_name.toLowerCase()));
 }
+
+
+/*
+* After main process installed mod, it sends back a response with mod informations
+* We delete mod from remote-mods-list and update remote-mods-count
+* Then we add mod informations into mods-list and update the linked mods-count
+ */
 
 ipcRenderer.on('install', (event, args) => {
     args = JSON.parse(args);
@@ -26,5 +37,5 @@ ipcRenderer.on('install', (event, args) => {
     cleaned_counter++;
     counter.innerHTML = 'Installed mods: ' + cleaned_counter;
 
-    create_table(table, args.name.toLowerCase(), args, false);
+    create_table(table, args, false);
 });

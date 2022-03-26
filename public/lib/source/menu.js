@@ -1,3 +1,7 @@
+/*
+* Open a tab when user click it
+ */
+
 function openTab(tab_name, t) {
     let i;
     let x = document.getElementsByClassName('tabs');

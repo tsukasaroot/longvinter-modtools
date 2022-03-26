@@ -1,5 +1,9 @@
 const fetch = require("node-fetch");
 
+/*
+* Make fetch requests to given url with either GET or POST
+ */
+
 function httpPostAsync(params, theUrl, csrf, callback) {
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.open('POST', theUrl, true);

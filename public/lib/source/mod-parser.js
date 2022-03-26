@@ -1,5 +1,10 @@
 const storage = window.localStorage;
 
+/*
+* Add a download button to given the row
+* Adapt the function called from onclick if its a remote or a local mod
+ */
+
 function add_download_button(mod_name, row, is_remote) {
     let cell4 = document.createElement('td');
     let button = document.createElement('button');
@@ -23,6 +28,11 @@ function add_download_button(mod_name, row, is_remote) {
     row.appendChild(cell4);
 }
 
+/*
+* Verify the mod's version by comparing it from remote infos
+* Call add_download_button if an update is available
+ */
+
 function check_local_mod_versions(mods_list) {
     for (let [key, mod] of Object.entries(mods_list)) {
         mod = JSON.parse(mod);
@@ -39,7 +49,12 @@ function check_local_mod_versions(mods_list) {
     }
 }
 
-function create_table(table, key, value, is_remote) {
+/*
+* Create tables on a given table object, a value that contains mod's informations and last argument is bool
+* to know if its remote or local
+ */
+
+function create_table(table, value, is_remote) {
     let row = table.insertRow(0);
 
     row.id = value.name.toLowerCase();
@@ -63,6 +78,10 @@ function create_table(table, key, value, is_remote) {
     }
 }
 
+/*
+/ Find given mod name into a list of Object containing mods informations
+ */
+
 function find_mod_in_list(haystack, list) {
     for (let [key, value] of Object.entries(list)) {
         if (haystack === JSON.parse(value).name.toLowerCase())
@@ -71,6 +90,12 @@ function find_mod_in_list(haystack, list) {
     return true
 }
 
+/*
+* Parse given list of remote mods to create the table in the front-end
+* Mods installed are filtered to not be shown in remote-mods-list
+* Store mods informations into storage
+ */
+
 async function parse_remote_mods(mods_list, remote_mods_list) {
     const table = document.getElementById('remote-mods-list').getElementsByTagName('tbody')[0];
     let counter = 0;
@@ -78,7 +103,7 @@ async function parse_remote_mods(mods_list, remote_mods_list) {
     for (let [key, url] of Object.entries(remote_mods_list)) {
         let mod = await httpGet(url)
         if (find_mod_in_list(key, mods_list)) {
-            create_table(table, key, mod, true);
+            create_table(table, mod, true);
         } else {
             counter++;
         }
@@ -87,12 +112,16 @@ async function parse_remote_mods(mods_list, remote_mods_list) {
     document.getElementById('remote-mods-count').innerHTML += Object.keys(remote_mods_list).length - counter;
 }
 
+/*
+* Parse locally installed mods and display them in mods-list
+ */
+
 function parse_mods(mods_list) {
     const table = document.getElementById('mods-list').getElementsByTagName('tbody')[0];
 
     document.getElementById('mods-count').innerHTML += mods_list.length;
 
     for (let [key, mod] of Object.entries(mods_list)) {
-        create_table(table, key, JSON.parse(mod), false);
+        create_table(table, JSON.parse(mod), false);
     }
 }
