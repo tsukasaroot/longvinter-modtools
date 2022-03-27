@@ -169,11 +169,11 @@ app.on("window-all-closed", () => {
     }
 });
 
-/*app.on("activate", () => {
+app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {
         loadMainWindow();
     }
-});*/
+});
 
 ipcMain.on('restart_app', () => {
     autoUpdater.quitAndInstall();
