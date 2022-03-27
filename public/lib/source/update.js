@@ -20,5 +20,8 @@ ipcRenderer.on('update', (event, args) => {
     const row = document.getElementById(args.name.toLowerCase());
 
     row.children[1].innerHTML = JSON.parse(storage.getItem(args.name.toLowerCase())).version;
-    row.removeChild(row.children[4]);
+    row.removeChild(row.children[5]);
+
+    storage.removeItem(args.name.toLowerCase());
+    storage.setItem(args.name.toLowerCase(), JSON.stringify(args));
 });

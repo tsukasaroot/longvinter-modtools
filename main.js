@@ -74,11 +74,15 @@ const loadMainWindow = () => {
         height: 800,
         webPreferences: {
             nodeIntegration: true,
-            contextIsolation: false,
-            enableRemoteModule: true,
+            contextIsolation: false
         },
+        enableRemoteModule: true,
         autoHideMenuBar: true,
     });
+
+    const ses = mainWindow.webContents.session;
+
+    ses.clearCache();
 
     getResponse('https://raw.githubusercontent.com/tsukasaroot/longvinter-mods/main/modules-list.json')
         .then(remote_mods_list => {
@@ -114,7 +118,7 @@ async function retrieval(args) {
     await updater.downloadManifestFiles(args.name.toLowerCase(), manifest.files);
 }
 
-app.disableHardwareAcceleration()
+app.disableHardwareAcceleration();
 
 app.on("ready", loadMainWindow);
 
@@ -137,9 +141,14 @@ ipcMain.on('restart_app', () => {
 ipcMain.on('update', async (event, args) => {
     await retrieval(args);
     event.reply('update', args);
-})
+});
 
 ipcMain.on('install', async (event, args) => {
     await retrieval(args);
     event.reply('install', args);
-})
+});
+
+ipcMain.on('uninstall', async (event, args) => {
+    console.log(args);
+    event.reply('uninstall', args);
+});

@@ -75,6 +75,20 @@ function create_table(table, value, is_remote) {
 
     if (is_remote) {
         add_download_button(value.name, row, is_remote);
+    } else {
+        let cell4 = document.createElement('td');
+        let button = document.createElement('button');
+        button.onclick = () => {
+            uninstall(value.name.toLowerCase(), button);
+        };
+        button.innerHTML = '<i class="fa fa-trash"></i>';
+        button.style.border = 'none';
+        button.style.color = 'white';
+        button.style.background = 'none';
+        button.style.padding = '0';
+
+        cell4.appendChild(button)
+        row.appendChild(cell4);
     }
 }
 

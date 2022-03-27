@@ -45,11 +45,15 @@
                 let mod_parser = document.createElement('script');
                 mod_parser.setAttribute('src', 'lib/source/mod-parser.js');
 
+                let uninstall = document.createElement('script');
+                uninstall.setAttribute('src', 'lib/source/uninstall.js');
+
                 let init = document.createElement('script');
                 init.setAttribute('src', 'lib/source/init.js');
 
                 document.head.appendChild(update);
                 document.head.appendChild(install);
+                document.head.appendChild(uninstall);
                 document.head.appendChild(fetch);
                 document.head.appendChild(menu);
                 document.head.appendChild(mod_parser);
