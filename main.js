@@ -118,6 +118,12 @@ async function retrieval(args) {
     await updater.downloadManifestFiles(args.name.toLowerCase(), manifest.files);
 }
 
+async function uninstall(args) {
+    args = JSON.parse(args);
+
+    fs.rmSync(mod_path + args.name.toLowerCase(), {recursive: true, force: true});
+}
+
 app.disableHardwareAcceleration();
 
 app.on("ready", loadMainWindow);
@@ -149,6 +155,6 @@ ipcMain.on('install', async (event, args) => {
 });
 
 ipcMain.on('uninstall', async (event, args) => {
-    console.log(args);
+    await uninstall(args);
     event.reply('uninstall', args);
 });
