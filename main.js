@@ -1,12 +1,12 @@
 'use strict';
-const {app, BrowserWindow, ipcMain} = require('electron');
+const {app, BrowserWindow, ipcMain, shell} = require('electron');
 const path = require('path');
 const fs = require('fs');
 const fetch = require('node-fetch');
 const {autoUpdater} = require('electron-updater');
 const {Updater} = require('./lib/updater');
 
-const mod_path = '../Longvinter/Content/CoreMods/';
+var mod_path = '';
 
 if (process.defaultApp) {
     if (process.argv.length >= 2) {
@@ -32,12 +32,10 @@ if (!gotTheLock) {
     })
 
     // Create mainWindow, load the rest of the app, etc...
-    app.whenReady().then(() => {
-        loadMainWindow()
-    })
+    app.on("ready", loadMainWindow);
 
     app.on('open-url', (event, url) => {
-        dialog.showErrorBox('Welcome Back', `You arrived from: ${url}`)
+        console.log("test");
     })
 }
 
@@ -117,41 +115,42 @@ function loadMainWindow() {
 
     ses.clearCache();
 
+    let file = 'config.json';
+    if (fs.existsSync(file)) {
+        let config = JSON.parse(fs.readFileSync(file, 'utf8'));
+        mod_path = config.pathtogame;
+    }
+
     getResponse('https://raw.githubusercontent.com/tsukasaroot/longvinter-mods/main/modules-list.json')
         .then(remote_mods_list => {
-            scanDirectories(mainWindow, remote_mods_list, mod_path);
+            scanDirectories(mainWindow, remote_mods_list, mod_path + '\\');
         });
 
     mainWindow.once('ready-to-show', () => {
         autoUpdater.checkForUpdatesAndNotify();
     });
-
-    autoUpdater.on('update-available', () => {
-        mainWindow.webContents.send('update_available');
-    });
-
-    autoUpdater.on('update-downloaded', () => {
-        mainWindow.webContents.send('update_downloaded');
-    });
 }
+
+autoUpdater.on('update-available', () => {
+    mainWindow.webContents.send('update_available');
+});
+
+autoUpdater.on('update-downloaded', () => {
+    mainWindow.webContents.send('update_downloaded');
+});
 
 ipcMain.on('ispackaged', () => {
     mainWindow.webContents.send('ispackaged', app.isPackaged);
-})
-
-ipcMain.on('context', () => {
-
-    mainWindow.webContents.send('context', app.getAppPath());
-})
+});
 
 /*
 * Called by update / install ipcMain to update or install a mod on user machine
 * arg is a stringify JSON containing the mod's informations
  */
 
-async function retrieval(args) {
+async function retrieval(args, mp) {
     args = JSON.parse(args);
-    let updater = new Updater(args.servers[0]);
+    let updater = new Updater(args.servers[0], mp);
     let manifest = await updater.getManifest();
     await updater.downloadManifestFiles(args.name.toLowerCase(), manifest.files);
 }
@@ -159,12 +158,10 @@ async function retrieval(args) {
 async function uninstall(args) {
     args = JSON.parse(args);
 
-    fs.rmSync(mod_path + args.name.toLowerCase(), {recursive: true, force: true});
+    fs.rmSync(mod_path + '\\' + args.name.toLowerCase(), {recursive: true, force: true});
 }
 
 app.disableHardwareAcceleration();
-
-//app.on("ready", loadMainWindow);
 
 app.on("window-all-closed", () => {
     if (process.platform !== "darwin") {
@@ -172,23 +169,23 @@ app.on("window-all-closed", () => {
     }
 });
 
-app.on("activate", () => {
+/*app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {
         loadMainWindow();
     }
-});
+});*/
 
 ipcMain.on('restart_app', () => {
     autoUpdater.quitAndInstall();
 });
 
 ipcMain.on('update', async (event, args) => {
-    await retrieval(args);
+    await retrieval(args, mod_path + '\\');
     event.reply('update', args);
 });
 
 ipcMain.on('install', async (event, args) => {
-    await retrieval(args);
+    await retrieval(args, mod_path + '\\');
     event.reply('install', args);
 });
 
@@ -196,3 +193,10 @@ ipcMain.on('uninstall', async (event, args) => {
     await uninstall(args);
     event.reply('uninstall', args);
 });
+
+// Handle window controls via IPC
+ipcMain.on('shell:open', () => {
+    const pageDirectory = __dirname.replace('app.asar', 'app.asar.unpacked')
+    const pagePath = path.join('file://', pageDirectory, 'index.html')
+    shell.openExternal(pagePath)
+})
