@@ -8,6 +8,39 @@ const {Updater} = require('./lib/updater');
 
 const mod_path = '../Longvinter/Content/CoreMods/';
 
+if (process.defaultApp) {
+    if (process.argv.length >= 2) {
+        app.setAsDefaultProtocolClient('electron-test', process.execPath, [path.resolve(process.argv[1])])
+    }
+} else {
+    app.setAsDefaultProtocolClient('electron-test')
+}
+
+let mainWindow;
+
+const gotTheLock = app.requestSingleInstanceLock()
+
+if (!gotTheLock) {
+    app.quit()
+} else {
+    app.on('second-instance', (event, commandLine, workingDirectory) => {
+        // Someone tried to run a second instance, we should focus our window.
+        if (mainWindow) {
+            if (mainWindow.isMinimized()) mainWindow.restore()
+            mainWindow.focus()
+        }
+    })
+
+    // Create mainWindow, load the rest of the app, etc...
+    app.whenReady().then(() => {
+        loadMainWindow()
+    })
+
+    app.on('open-url', (event, url) => {
+        dialog.showErrorBox('Welcome Back', `You arrived from: ${url}`)
+    })
+}
+
 /*
 * Retrieve all directories from given path and return it through callback
  */
@@ -68,8 +101,8 @@ function scanDirectories(mainWindow, remote_mods_list, path) {
 * create IPC channels to listen to for available self-updates / software env query
  */
 
-const loadMainWindow = () => {
-    const mainWindow = new BrowserWindow({
+function loadMainWindow() {
+    mainWindow = new BrowserWindow({
         width: 1200,
         height: 800,
         webPreferences: {
@@ -100,11 +133,16 @@ const loadMainWindow = () => {
     autoUpdater.on('update-downloaded', () => {
         mainWindow.webContents.send('update_downloaded');
     });
-
-    ipcMain.on('ispackaged', () => {
-        mainWindow.webContents.send('ispackaged', app.isPackaged);
-    })
 }
+
+ipcMain.on('ispackaged', () => {
+    mainWindow.webContents.send('ispackaged', app.isPackaged);
+})
+
+ipcMain.on('context', () => {
+
+    mainWindow.webContents.send('context', app.getAppPath());
+})
 
 /*
 * Called by update / install ipcMain to update or install a mod on user machine
@@ -126,7 +164,7 @@ async function uninstall(args) {
 
 app.disableHardwareAcceleration();
 
-app.on("ready", loadMainWindow);
+//app.on("ready", loadMainWindow);
 
 app.on("window-all-closed", () => {
     if (process.platform !== "darwin") {

@@ -8,3 +8,7 @@ nsis:
   allowToChangeInstallationDirectory: true
 publish:
   provider: github
+protocols:
+  name: linking-test
+  schemes:
+    [electron-test]

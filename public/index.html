@@ -21,6 +21,12 @@
 
     <script>
         const {ipcRenderer} = require('electron');
+
+        ipcRenderer.send('context');
+        ipcRenderer.on('context', (event, arg) => {
+            console.log(arg);
+        });
+
         ipcRenderer.send('ispackaged');
 
         ipcRenderer.on('ispackaged', (event, args) => {
