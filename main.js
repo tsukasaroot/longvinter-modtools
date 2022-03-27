@@ -1,5 +1,5 @@
 'use strict';
-const {app, BrowserWindow, ipcMain, shell} = require('electron');
+const {app, BrowserWindow, ipcMain, shell, globalShortcut} = require('electron');
 const path = require('path');
 const fs = require('fs');
 const fetch = require('node-fetch');
@@ -71,26 +71,42 @@ function getResponse(url) {
  */
 
 function scanDirectories(mainWindow, remote_mods_list, path) {
-    getDirectories(path, function (err, content) {
-        let all_mods = [];
+    if (path !== "") {
+        getDirectories(path + '\\', function (err, content) {
+            let all_mods = [];
 
-        if (content != null)
-            for (const folder of content) {
-                let file = path + folder + '/module.json';
-                if (fs.existsSync(file)) {
-                    let text = fs.readFileSync(file, 'utf8');
-                    all_mods.push(text);
+            if (content != null)
+                for (const folder of content) {
+                    let file = path + folder + '/module.json';
+                    if (fs.existsSync(file)) {
+                        let text = fs.readFileSync(file, 'utf8');
+                        all_mods.push(text);
+                    }
                 }
-            }
 
+            mainWindow.loadFile("public/index.html", {
+                query: {
+                    "data": JSON.stringify(all_mods),
+                    "version": app.getVersion(),
+                    "remote_mods_list": JSON.stringify(remote_mods_list),
+                }
+            });
+        });
+    } else {
         mainWindow.loadFile("public/index.html", {
             query: {
-                "data": JSON.stringify(all_mods),
-                "version": app.getVersion(),
-                "remote_mods_list": JSON.stringify(remote_mods_list),
+                "error": "No path defined",
+                "version": app.getVersion()
             }
         });
-    })
+    }
+
+    globalShortcut.register('f5', function() {
+        mainWindow.reload();
+    });
+    globalShortcut.register('CommandOrControl+R', function() {
+        mainWindow.reload();
+    });
 }
 
 /**
@@ -119,11 +135,20 @@ function loadMainWindow() {
     if (fs.existsSync(file)) {
         let config = JSON.parse(fs.readFileSync(file, 'utf8'));
         mod_path = config.pathtogame;
+    } else {
+        let config = {};
+        config.uilanguage = "en";
+        config.noselfupdate = false;
+        config.noupdate = false;
+        config.autostart = true;
+        config.pathtogame = "";
+
+        fs.writeFileSync('config.json', JSON.stringify(config), 'utf-8');
     }
 
     getResponse('https://raw.githubusercontent.com/tsukasaroot/longvinter-mods/main/modules-list.json')
         .then(remote_mods_list => {
-            scanDirectories(mainWindow, remote_mods_list, mod_path + '\\');
+            scanDirectories(mainWindow, remote_mods_list, mod_path);
         });
 
     mainWindow.once('ready-to-show', () => {
@@ -193,6 +218,15 @@ ipcMain.on('uninstall', async (event, args) => {
     await uninstall(args);
     event.reply('uninstall', args);
 });
+
+ipcMain.on('refresh', () => {
+    mainWindow.reload();
+});
+
+ipcMain.on('add-game-path', (event, path) => {
+    console.log(path);
+    event.reply('add-game-path');
+})
 
 // Handle window controls via IPC
 ipcMain.on('shell:open', () => {
