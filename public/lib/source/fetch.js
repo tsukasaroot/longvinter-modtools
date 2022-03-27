@@ -1,6 +1,6 @@
 const fetch = require("node-fetch");
 
-/*
+/**
 * Make fetch requests to given url with either GET or POST
  */
 

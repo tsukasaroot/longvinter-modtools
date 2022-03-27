@@ -1,4 +1,4 @@
-/*
+/**
 * Activate loading FA then send mod informations through storage with mod's name to main process
  */
 
@@ -8,7 +8,6 @@ function install(mod_name, t) {
 
     ipcRenderer.send('install', storage.getItem(mod_name.toLowerCase()));
 }
-
 
 /*
 * After main process installed mod, it sends back a response with mod informations

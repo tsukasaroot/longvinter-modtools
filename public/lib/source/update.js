@@ -1,4 +1,4 @@
-/*
+/**
 * Activate loading FA then send mod informations through storage with mod's name to main process
  */
 

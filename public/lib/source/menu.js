@@ -1,4 +1,4 @@
-/*
+/**
 * Open a tab when user click it
  */
 

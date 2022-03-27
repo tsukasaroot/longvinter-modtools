@@ -1,4 +1,4 @@
-/*
+/**
 * Send mod_name to uninstall function in main process
  */
 

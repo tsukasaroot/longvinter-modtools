@@ -39,7 +39,7 @@ if (!gotTheLock) {
     })
 }
 
-/*
+/**
 * Retrieve all directories from given path and return it through callback
  */
 
@@ -50,7 +50,7 @@ function getDirectories(path, callback) {
     })
 }
 
-/*
+/**
 * Get response from GitHub repo then return the JSON's body
  */
 
@@ -65,7 +65,7 @@ function getResponse(url) {
         .catch(error => console.warn(error));
 }
 
-/*
+/**
 * Scan mod directories to find all installed mods to load module.json and store result in array.
 * load html file with args stringify when needed, and send them through querystring
  */
@@ -93,7 +93,7 @@ function scanDirectories(mainWindow, remote_mods_list, path) {
     })
 }
 
-/*
+/**
 * Create the window
 * Retrieve list of all mods from linked Github repo
 * create IPC channels to listen to for available self-updates / software env query
@@ -143,7 +143,7 @@ ipcMain.on('ispackaged', () => {
     mainWindow.webContents.send('ispackaged', app.isPackaged);
 });
 
-/*
+/**
 * Called by update / install ipcMain to update or install a mod on user machine
 * arg is a stringify JSON containing the mod's informations
  */

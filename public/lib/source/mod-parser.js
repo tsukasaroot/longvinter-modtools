@@ -1,6 +1,6 @@
 const storage = window.localStorage;
 
-/*
+/**
 * Add a download button to given the row
 * Adapt the function called from onclick if its a remote or a local mod
  */
@@ -28,7 +28,7 @@ function add_download_button(mod_name, row, is_remote) {
     row.appendChild(cell4);
 }
 
-/*
+/**
 * Verify the mod's version by comparing it from remote infos
 * Call add_download_button if an update is available
  */
@@ -49,7 +49,7 @@ function check_local_mod_versions(mods_list) {
     }
 }
 
-/*
+/**
 * Create tables on a given table object, a value that contains mod's informations and last argument is bool
 * to know if its remote or local
  */
@@ -92,7 +92,7 @@ function create_table(table, value, is_remote) {
     }
 }
 
-/*
+/**
 / Find given mod name into a list of Object containing mods informations
  */
 
@@ -104,7 +104,7 @@ function find_mod_in_list(haystack, list) {
     return true
 }
 
-/*
+/**
 * Parse given list of remote mods to create the table in the front-end
 * Mods installed are filtered to not be shown in remote-mods-list
 * Store mods informations into storage
@@ -126,7 +126,7 @@ async function parse_remote_mods(mods_list, remote_mods_list) {
     document.getElementById('remote-mods-count').innerHTML += Object.keys(remote_mods_list).length - counter;
 }
 
-/*
+/**
 * Parse locally installed mods and display them in mods-list
  */
 
