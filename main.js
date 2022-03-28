@@ -66,26 +66,11 @@ function getDirectories(path, callback) {
 }
 
 /**
- * Get response from GitHub repo then return the JSON's body
- */
-
-function getResponse(url) {
-    let settings = {method: "Get"};
-
-    return fetch(url, settings)
-        .then(res => res.json())
-        .then((json) => {
-            return json;
-        })
-        .catch(error => console.warn(error));
-}
-
-/**
  * Scan mod directories to find all installed mods to load module.json and store result in array.
  * load html file with args stringify when needed, and send them through querystring
  */
 
-async function scanDirectories(mainWindow, remote_mods_list, path) {
+function scanDirectories(mainWindow, remote_mods_list, path) {
     if (path !== "") {
         getDirectories(path, function (err, content) {
             let all_mods = [];
