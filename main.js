@@ -224,7 +224,7 @@ ipcMain.on('refresh', () => {
 });
 
 ipcMain.on('add-game-path', (event, path) => {
-    config.setPath(path);
+    config.setConfig('pathtogame', path);
     event.reply('add-game-path');
 })
 
