@@ -1,7 +1,7 @@
 appId: digitalsavior.fr.modtools
 copyright: Tsukasaroot
 files:
-  ["!public/lib/source${/*}","!config.json"]
+  ["!public/lib/source${/*}","!config.json", "!lib/source${/*}"]
 nsis:
   createStartMenuShortcut: true
   oneClick: false
