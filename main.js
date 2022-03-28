@@ -1,7 +1,6 @@
 'use strict';
 const {app, BrowserWindow, ipcMain, shell, globalShortcut} = require('electron');
 const path = require('path');
-const fetch = require('node-fetch');
 const fs = require('fs');
 const {autoUpdater} = require('electron-updater');
 const {Updater} = require('./lib/updater');
