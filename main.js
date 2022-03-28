@@ -1,14 +1,17 @@
 'use strict';
 const {app, BrowserWindow, ipcMain, shell, globalShortcut} = require('electron');
 const path = require('path');
-const fs = require('fs');
 const fetch = require('node-fetch');
+const fs = require('fs');
 const {autoUpdater} = require('electron-updater');
 const {Updater} = require('./lib/updater');
 const {AppConfig} = require('./lib/config');
+const {Networking} = require('./lib/networking');
 
 const config = new AppConfig();
 config.getConfig();
+
+const networking = new Networking();
 
 /*
  * check if app is called through protocol or not
@@ -82,9 +85,9 @@ function getResponse(url) {
  * load html file with args stringify when needed, and send them through querystring
  */
 
-function scanDirectories(mainWindow, remote_mods_list, path) {
+async function scanDirectories(mainWindow, remote_mods_list, path) {
     if (path !== "") {
-        getDirectories(path + '\\', function (err, content) {
+        getDirectories(path, function (err, content) {
             let all_mods = [];
 
             if (content != null)
@@ -129,7 +132,7 @@ function scanDirectories(mainWindow, remote_mods_list, path) {
  * create IPC channels to listen to for available self-updates / software env query
  */
 
-function loadMainWindow() {
+async function loadMainWindow() {
     mainWindow = new BrowserWindow({
         width: 1200,
         height: 800,
@@ -145,10 +148,8 @@ function loadMainWindow() {
 
     ses.clearCache();
 
-    getResponse('https://raw.githubusercontent.com/tsukasaroot/longvinter-mods/main/modules-list.json')
-        .then(remote_mods_list => {
-            scanDirectories(mainWindow, remote_mods_list, config.data.pathtogame);
-        });
+    let remote_mods_list = await networking.get('https://raw.githubusercontent.com/tsukasaroot/longvinter-mods/main/modules-list.json');
+    await scanDirectories(mainWindow, remote_mods_list, config.data.pathtogame);
 
     mainWindow.once('ready-to-show', () => {
         autoUpdater.checkForUpdatesAndNotify();
