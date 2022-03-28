@@ -102,10 +102,12 @@ function scanDirectories(mainWindow, remote_mods_list, path) {
     }
 
     globalShortcut.register('f5', function() {
-        mainWindow.reload();
+        app.relaunch();
+        app.exit(0);
     });
     globalShortcut.register('CommandOrControl+R', function() {
-        mainWindow.reload();
+        app.relaunch();
+        app.exit(0);
     });
 }
 
