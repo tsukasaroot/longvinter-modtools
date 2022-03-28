@@ -134,3 +134,4 @@ package-lock.json
 dev-app-update.yml
 public/lib/all.min.js
 config.json
+lib/lib.min.js

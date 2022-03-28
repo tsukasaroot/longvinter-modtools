@@ -3,9 +3,14 @@ const {app, BrowserWindow, ipcMain, shell, globalShortcut} = require('electron')
 const path = require('path');
 const fs = require('fs');
 const {autoUpdater} = require('electron-updater');
-const {Updater} = require('./lib/updater');
-const {AppConfig} = require('./lib/config');
-const {Networking} = require('./lib/networking');
+
+if (app.isPackaged) {
+    var {Updater, AppConfig, Networking} = require('./lib/lib.min.js');
+} else {
+    var {Updater} = require('./lib/source/updater');
+    var {AppConfig} = require('./lib/source/config');
+    var {Networking} = require('./lib/source/networking');
+}
 
 const config = new AppConfig();
 config.getConfig();

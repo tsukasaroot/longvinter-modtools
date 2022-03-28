@@ -8,7 +8,8 @@
   },
   "main": "main.js",
   "scripts": {
-    "uglify": "uglifyjs-folder ./public/lib/source -o public/lib/all.min.js",
+    "uglify-front": "uglifyjs-folder ./public/lib/source -o public/lib/all.min.js",
+    "uglify-lib": "uglifyjs-folder ./lib/source -o ./lib/lib.min.js",
     "start": "electron .",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "electron-builder build --win --publish never",
