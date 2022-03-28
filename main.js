@@ -5,8 +5,14 @@ const fs = require('fs');
 const fetch = require('node-fetch');
 const {autoUpdater} = require('electron-updater');
 const {Updater} = require('./lib/updater');
+const {AppConfig} = require('./lib/config');
 
-var mod_path = '';
+const config = new AppConfig();
+config.getConfig();
+
+/*
+ * check if app is called through protocol or not
+ */
 
 if (process.defaultApp) {
     if (process.argv.length >= 2) {
@@ -16,9 +22,15 @@ if (process.defaultApp) {
     app.setAsDefaultProtocolClient('electron-test')
 }
 
+// Get instance lock
+const gotTheLock = app.requestSingleInstanceLock()
+
 let mainWindow;
 
-const gotTheLock = app.requestSingleInstanceLock()
+/*
+ * If lock is not set, we quit, else we either focus on existing instance
+ * or we launch a fresh instance if no first instance
+ */
 
 if (!gotTheLock) {
     app.quit()
@@ -40,7 +52,7 @@ if (!gotTheLock) {
 }
 
 /**
-* Retrieve all directories from given path and return it through callback
+ * Retrieve all directories from given path and return it through callback
  */
 
 function getDirectories(path, callback) {
@@ -51,7 +63,7 @@ function getDirectories(path, callback) {
 }
 
 /**
-* Get response from GitHub repo then return the JSON's body
+ * Get response from GitHub repo then return the JSON's body
  */
 
 function getResponse(url) {
@@ -66,8 +78,8 @@ function getResponse(url) {
 }
 
 /**
-* Scan mod directories to find all installed mods to load module.json and store result in array.
-* load html file with args stringify when needed, and send them through querystring
+ * Scan mod directories to find all installed mods to load module.json and store result in array.
+ * load html file with args stringify when needed, and send them through querystring
  */
 
 function scanDirectories(mainWindow, remote_mods_list, path) {
@@ -101,20 +113,20 @@ function scanDirectories(mainWindow, remote_mods_list, path) {
         });
     }
 
-    globalShortcut.register('f5', function() {
+    globalShortcut.register('f5', function () {
         app.relaunch();
         app.exit(0);
     });
-    globalShortcut.register('CommandOrControl+R', function() {
+    globalShortcut.register('CommandOrControl+R', function () {
         app.relaunch();
         app.exit(0);
     });
 }
 
 /**
-* Create the window
-* Retrieve list of all mods from linked Github repo
-* create IPC channels to listen to for available self-updates / software env query
+ * Create the window
+ * Retrieve list of all mods from linked Github repo
+ * create IPC channels to listen to for available self-updates / software env query
  */
 
 function loadMainWindow() {
@@ -133,24 +145,9 @@ function loadMainWindow() {
 
     ses.clearCache();
 
-    let file = 'config.json';
-    if (fs.existsSync(file)) {
-        let config = JSON.parse(fs.readFileSync(file, 'utf8'));
-        mod_path = config.pathtogame;
-    } else {
-        let config = {};
-        config.uilanguage = "en";
-        config.noselfupdate = false;
-        config.noupdate = false;
-        config.autostart = true;
-        config.pathtogame = "";
-
-        fs.writeFileSync('config.json', JSON.stringify(config), 'utf-8');
-    }
-
     getResponse('https://raw.githubusercontent.com/tsukasaroot/longvinter-mods/main/modules-list.json')
         .then(remote_mods_list => {
-            scanDirectories(mainWindow, remote_mods_list, mod_path);
+            scanDirectories(mainWindow, remote_mods_list, config.data.pathtogame);
         });
 
     mainWindow.once('ready-to-show', () => {
@@ -171,8 +168,8 @@ ipcMain.on('ispackaged', () => {
 });
 
 /**
-* Called by update / install ipcMain to update or install a mod on user machine
-* arg is a stringify JSON containing the mod's informations
+ * Called by update / install ipcMain to update or install a mod on user machine
+ * arg is a stringify JSON containing the mod's informations
  */
 
 async function retrieval(args, mp) {
@@ -185,7 +182,7 @@ async function retrieval(args, mp) {
 async function uninstall(args) {
     args = JSON.parse(args);
 
-    fs.rmSync(mod_path + args.name.toLowerCase(), {recursive: true, force: true});
+    fs.rmSync(config.data.pathtogame + args.name.toLowerCase(), {recursive: true, force: true});
 }
 
 app.disableHardwareAcceleration();
@@ -207,12 +204,12 @@ ipcMain.on('restart_app', () => {
 });
 
 ipcMain.on('update', async (event, args) => {
-    await retrieval(args, mod_path);
+    await retrieval(args, config.data.pathtogame);
     event.reply('update', args);
 });
 
 ipcMain.on('install', async (event, args) => {
-    await retrieval(args, mod_path);
+    await retrieval(args, config.data.pathtogame);
     event.reply('install', args);
 });
 
@@ -227,9 +224,7 @@ ipcMain.on('refresh', () => {
 });
 
 ipcMain.on('add-game-path', (event, path) => {
-    let config = JSON.parse(fs.readFileSync('config.json', 'utf8'));
-    config.pathtogame = path;
-    fs.writeFileSync('config.json', JSON.stringify(config), 'utf-8');
+    config.setPath(path);
     event.reply('add-game-path');
 })
 
