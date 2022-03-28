@@ -6,6 +6,7 @@ Doc to come when stable release will be done (selfupdate functionality is broken
 Install the software in : steamapps\Longvinter
 
 First release is done, but there's more to come !
+  - Manage categories (CoreMods, Pak) to handle download in correct folder and open up tool to more usage
   - Checksum of updates / installations of mods to prevent any corrupted files
   - Auto installation and updates of unrealMods
   - Searchbar to look for available mods based on keywords
