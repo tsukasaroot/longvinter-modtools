@@ -36,11 +36,12 @@ window.onload = async function () {
     openTab('mods-installed', document.getElementsByClassName('nav-item')[0].children[0]);
 }
 
-function add_game_path() {
-    let game_path = path.dirname(document.getElementById('path').files[0].path);
+function add_game_path(t) {
+    jQuery('#modal').modal('hide');
+    let game_path = path.dirname(document.getElementById('path').files[0].path) + '\\Longvinter\\Content\\CoreMods\\';
     ipcRenderer.send('add-game-path', game_path);
 }
 
 ipcRenderer.on('add-game-path', () => {
-    //ipcRenderer.send('refresh');
+    ipcRenderer.send('refresh');
 });

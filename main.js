@@ -183,7 +183,7 @@ async function retrieval(args, mp) {
 async function uninstall(args) {
     args = JSON.parse(args);
 
-    fs.rmSync(mod_path + '\\' + args.name.toLowerCase(), {recursive: true, force: true});
+    fs.rmSync(mod_path + args.name.toLowerCase(), {recursive: true, force: true});
 }
 
 app.disableHardwareAcceleration();
@@ -205,12 +205,12 @@ ipcMain.on('restart_app', () => {
 });
 
 ipcMain.on('update', async (event, args) => {
-    await retrieval(args, mod_path + '\\');
+    await retrieval(args, mod_path);
     event.reply('update', args);
 });
 
 ipcMain.on('install', async (event, args) => {
-    await retrieval(args, mod_path + '\\');
+    await retrieval(args, mod_path);
     event.reply('install', args);
 });
 
@@ -220,11 +220,14 @@ ipcMain.on('uninstall', async (event, args) => {
 });
 
 ipcMain.on('refresh', () => {
-    mainWindow.reload();
+    app.relaunch();
+    app.exit(0);
 });
 
 ipcMain.on('add-game-path', (event, path) => {
-    console.log(path);
+    let config = JSON.parse(fs.readFileSync('config.json', 'utf8'));
+    config.pathtogame = path;
+    fs.writeFileSync('config.json', JSON.stringify(config), 'utf-8');
     event.reply('add-game-path');
 })
 
