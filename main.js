@@ -118,6 +118,11 @@ async function getUnrealModLoader(url, path) {
     await updater.coreDownloadManifestFiles('unrealmodloader', manifest.files);
 }
 
+async function createProfileFolder(pathToProfile)
+{
+
+}
+
 async function checkUnrealModLoader() {
     if (config.data.pathtogame === '')
         return;
@@ -140,7 +145,10 @@ async function checkUnrealModLoader() {
     }
 
     if (!fs.existsSync(unreal_path + '\\ModLoaderInfo.ini')) {
-        console.log("Create ModLoaderInfo.ini");
+        let mod_loader_info_root = "[INFO]\nLoaderPath=";
+        mod_loader_info_root += unreal_path + '\\UnrealEngineModLoader.dll';
+
+        fs.writeFileSync(unreal_path + '\\ModLoaderInfo.ini', mod_loader_info_root);
     }
 
     if (!fs.existsSync(unreal_path_core + '\\UnrealEngineModLauncher.exe')
@@ -151,12 +159,51 @@ async function checkUnrealModLoader() {
         module = JSON.parse(fs.readFileSync(unreal_path_core + '\\module.json' , 'utf8'));
     }
 
+    if (!fs.existsSync(unreal_path_core + '\\ModLoaderInfo.ini')) {
+        let mod_loader_info = "[DEBUG]\n" +
+            "#Enables the default console, used for debugging and finding errors, Set to 1 for true\n" +
+            "UseConsole=1";
+
+        fs.writeFileSync(unreal_path_core + '\\ModLoaderInfo.ini', mod_loader_info);
+    }
+
     if (fs.existsSync(unreal_path_core + '\\Profiles')) {
         if (!fs.existsSync(unreal_path_core + '\\Profiles\\Longvinter-Win64-Shipping.profile')) {
-            console.log("create profile")
+            let profileToWrite = "#Games Basic Information\n" +
+                "[GameInfo]\n" +
+                "\n" +
+                "#Set to 1 (true) if the games engine version is 4.23 and up\n" +
+                "UsesFNamePool=1\n" +
+                "\n" +
+                "#Set to 1 (true) if the game engine version is 4.18 and up (this can vary)\n" +
+                "IsUsingFChunkedFixedUObjectArray=1\n" +
+                "\n" +
+                "#Fallback if Spawn Actor can't be found or refuses to work. You should almost NEVER use.\n" +
+                "IsUsingDeferedSpawn=0\n" +
+                "\n" +
+                "#UE4.22 changes the namepool weird, only set this to 1 if the game uses 4.22\n" +
+                "#IsUsing4_22=0";
+
+            fs.writeFileSync(unreal_path_core + '\\Profiles\\Longvinter-Win64-Shipping.profile', profileToWrite);
         }
     } else {
-        console.log("Create folder + profile");
+        fs.mkdirSync(unreal_path_core + '\\Profiles');
+        let profileToWrite = "#Games Basic Information\n" +
+            "[GameInfo]\n" +
+            "\n" +
+            "#Set to 1 (true) if the games engine version is 4.23 and up\n" +
+            "UsesFNamePool=1\n" +
+            "\n" +
+            "#Set to 1 (true) if the game engine version is 4.18 and up (this can vary)\n" +
+            "IsUsingFChunkedFixedUObjectArray=1\n" +
+            "\n" +
+            "#Fallback if Spawn Actor can't be found or refuses to work. You should almost NEVER use.\n" +
+            "IsUsingDeferedSpawn=0\n" +
+            "\n" +
+            "#UE4.22 changes the namepool weird, only set this to 1 if the game uses 4.22\n" +
+            "#IsUsing4_22=0";
+
+        fs.writeFileSync(unreal_path_core + '\\Profiles\\Longvinter-Win64-Shipping.profile', profileToWrite);
     }
 
     if (error || module.version !== unreal_remote_info.version) {
