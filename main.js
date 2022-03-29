@@ -7,6 +7,7 @@ const {autoUpdater} = require('electron-updater');
 const {Updater} = require('./lib/updater');
 const {AppConfig} = require('./lib/config');
 const {Networking} = require('./lib/networking');
+const {UnrealModLoader} = require('./lib/unrealmodloader');
 
 const config = new AppConfig();
 config.getConfig();
@@ -111,88 +112,30 @@ function scanDirectories(mainWindow, remote_mods_list, path) {
     });
 }
 
-async function getUnrealModLoader(url, path) {
-    let updater = new Updater(url, path);
-    let manifest = await updater.getManifest();
-    await updater.coreDownloadManifestFiles('unrealmodloader', manifest.files);
-}
-
-async function createProfileFolder(pathToProfile)
-{
-    let profileToWrite = "#Games Basic Information\n" +
-        "[GameInfo]\n" +
-        "\n" +
-        "#Set to 1 (true) if the games engine version is 4.23 and up\n" +
-        "UsesFNamePool=1\n" +
-        "\n" +
-        "#Set to 1 (true) if the game engine version is 4.18 and up (this can vary)\n" +
-        "IsUsingFChunkedFixedUObjectArray=1\n" +
-        "\n" +
-        "#Fallback if Spawn Actor can't be found or refuses to work. You should almost NEVER use.\n" +
-        "IsUsingDeferedSpawn=0\n" +
-        "\n" +
-        "#UE4.22 changes the namepool weird, only set this to 1 if the game uses 4.22\n" +
-        "#IsUsing4_22=0";
-
-    fs.writeFileSync(pathToProfile, profileToWrite);
-}
-
 async function checkUnrealModLoader() {
     if (config.data.pathtogame === '')
         return;
 
     let unreal_remote_info = await networking.get('https://raw.githubusercontent.com/Longvinter-Modtools/UnrealModLoader/main/unrealmodloader/module.json');
     let unreal_path = config.data.pathtogame.split('\\');
-    let module = null;
 
-    unreal_path.pop();
-    unreal_path.pop();
-    unreal_path.pop();
+    const unreal = new UnrealModLoader();
 
+    unreal_path = unreal.pop_array(unreal_path, 3);
     unreal_path = path.join.apply(null, unreal_path) + '\\Binaries\\Win64';
+
     let unreal_path_core = unreal_path + '\\unrealmodloader';
-    let error = false;
 
-    if (!fs.existsSync(unreal_path + '\\xinput1_3.dll')) {
-        error = true;
-    }
+    unreal.checkXinput(unreal_path + '\\xinput1_3.dll');
 
-    if (!fs.existsSync(unreal_path + '\\ModLoaderInfo.ini')) {
-        let mod_loader_info_root = "[INFO]\nLoaderPath=";
-        mod_loader_info_root += unreal_path + '\\UnrealEngineModLoader.dll';
+    await unreal.checkUnrealFolder(unreal_path_core);
+    await unreal.finalize(unreal_remote_info.servers[0], unreal_path + '\\', unreal_remote_info.version);
+    await unreal.checkProfile(unreal_path_core + '\\Profiles');
 
-        fs.writeFileSync(unreal_path + '\\ModLoaderInfo.ini', mod_loader_info_root);
-    }
-
-    if (!fs.existsSync(unreal_path_core + '\\UnrealEngineModLauncher.exe')
-        || !fs.existsSync(unreal_path_core + '\\UnrealEngineModLoader.dll') || !fs.existsSync(unreal_path_core + '\\module.json')) {
-        error = true;
-    } else {
-        module = JSON.parse(fs.readFileSync(unreal_path_core + '\\module.json' , 'utf8'));
-    }
-
-    if (!fs.existsSync(unreal_path_core + '\\ModLoaderInfo.ini')) {
-        let mod_loader_info = "[DEBUG]\n" +
-            "#Enables the default console, used for debugging and finding errors, Set to 1 for true\n" +
-            "UseConsole=1";
-
-        fs.writeFileSync(unreal_path_core + '\\ModLoaderInfo.ini', mod_loader_info);
-    }
-
-    if (fs.existsSync(unreal_path_core + '\\Profiles')) {
-        if (!fs.existsSync(unreal_path_core + '\\Profiles\\Longvinter-Win64-Shipping.profile')) {
-            await createProfileFolder(unreal_path_core + '\\Profiles\\Longvinter-Win64-Shipping.profile');
-        }
-    } else {
-        fs.mkdirSync(unreal_path_core + '\\Profiles');
-        await createProfileFolder(unreal_path_core + '\\Profiles\\Longvinter-Win64-Shipping.profile');
-    }
-
-    if (error || module.version !== unreal_remote_info.version) {
-        console.log(module.version + ' + ' + unreal_remote_info.version)
-        await getUnrealModLoader(unreal_remote_info.servers[0], unreal_path + '\\');
-    }
+    unreal.checkModLoaderInfoRoot(unreal_path)
+    unreal.checkModLoader(unreal_path_core + '\\ModLoaderInfo.ini');
 }
+
 
 /**
  * Create the window
