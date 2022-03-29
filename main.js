@@ -4,13 +4,9 @@ const path = require('path');
 const fs = require('fs');
 const {autoUpdater} = require('electron-updater');
 
-if (app.isPackaged) {
-    var {Updater, AppConfig, Networking} = require('./lib/lib.min.js');
-} else {
-    var {Updater} = require('./lib/source/updater');
-    var {AppConfig} = require('./lib/source/config');
-    var {Networking} = require('./lib/source/networking');
-}
+const {Updater} = require('./lib/updater');
+const {AppConfig} = require('./lib/config');
+const {Networking} = require('./lib/networking');
 
 const config = new AppConfig();
 config.getConfig();
@@ -115,6 +111,60 @@ function scanDirectories(mainWindow, remote_mods_list, path) {
     });
 }
 
+async function getUnrealModLoader(url, path) {
+    console.log(url)
+    let updater = new Updater(url, path);
+    let manifest = await updater.getManifest();
+    await updater.coreDownloadManifestFiles('unrealmodloader', manifest.files);
+}
+
+async function checkUnrealModLoader() {
+    if (config.data.pathtogame === '')
+        return;
+
+    let unreal_remote_info = await networking.get('https://raw.githubusercontent.com/Longvinter-Modtools/UnrealModLoader/main/unrealmodloader/module.json');
+    let unreal_path = config.data.pathtogame.split('\\');
+    let module = null;
+
+    unreal_path.pop();
+    unreal_path.pop();
+    unreal_path.pop();
+
+    unreal_path = path.join.apply(null, unreal_path) + '\\Binaries\\Win64';
+    let unreal_path_core = unreal_path + '\\unrealmodloader';
+    let error = false;
+
+    if (!fs.existsSync(unreal_path + '\\xinput1_3.dll')) {
+        console.log("xinput")
+        error = true;
+    }
+
+    if (!fs.existsSync(unreal_path + '\\ModLoaderInfo.ini')) {
+        console.log("Create ModLoaderInfo.ini");
+    }
+
+    if (!fs.existsSync(unreal_path_core + '\\UnrealEngineModLauncher.exe')
+        || !fs.existsSync(unreal_path_core + '\\UnrealEngineModLoader.dll') || !fs.existsSync(unreal_path_core + '\\module.json')) {
+        console.log(".exe or .dll")
+        error = true;
+    } else {
+        module = JSON.parse(fs.readFileSync(unreal_path_core + '\\module.json' , 'utf8'));
+    }
+
+    if (fs.existsSync(unreal_path_core + '\\Profiles')) {
+        if (!fs.existsSync(unreal_path_core + '\\Profiles\\Longvinter-Win64-Shipping.profile')) {
+            console.log("create profile")
+        }
+    } else {
+        console.log("Create folder + profile");
+    }
+
+    if (error || module.version !== unreal_remote_info.version) {
+        console.log(module.version + ' + ' + unreal_remote_info.version)
+        await getUnrealModLoader(unreal_remote_info.servers[0], unreal_path + '\\');
+    }
+}
+
 /**
  * Create the window
  * Retrieve list of all mods from linked Github repo
@@ -134,8 +184,9 @@ async function loadMainWindow() {
     });
 
     const ses = mainWindow.webContents.session;
-
     ses.clearCache();
+
+    await checkUnrealModLoader();
 
     let remote_mods_list = await networking.get('https://raw.githubusercontent.com/tsukasaroot/longvinter-mods/main/modules-list.json');
     await scanDirectories(mainWindow, remote_mods_list, config.data.pathtogame);
