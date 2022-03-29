@@ -21,6 +21,8 @@ window.jQuery = require('jquery');
 window.onload = async function () {
     storage.clear();
 
+    ipcRenderer.send('unrealmodloader-check');
+
     if (mods_list !== null)
         parse_mods(mods_list);
     if (mods_list !== null && remote_mods_list !== null)
@@ -32,7 +34,7 @@ window.onload = async function () {
         jQuery('#modal').modal('show');
     }
 
-    document.getElementById('version').innerText = ver;
+    document.getElementById('version').innerText += ' ' + ver;
     openTab('mods-installed', document.getElementsByClassName('nav-item')[0].children[0]);
 }
 
@@ -41,6 +43,10 @@ function add_game_path(t) {
     let game_path = path.dirname(document.getElementById('path').files[0].path) + '\\Longvinter\\Content\\CoreMods\\';
     ipcRenderer.send('add-game-path', game_path);
 }
+
+ipcRenderer.on('unrealmodloader-check', (event, version) => {
+    document.getElementById('unreal-version').innerText += ' ' + version;
+});
 
 ipcRenderer.on('add-game-path', () => {
     ipcRenderer.send('refresh');

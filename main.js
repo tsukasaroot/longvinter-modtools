@@ -132,8 +132,9 @@ async function checkUnrealModLoader() {
     await unreal.finalize(unreal_remote_info.servers[0], unreal_path + '\\', unreal_remote_info.version);
     await unreal.checkProfile(unreal_path_core + '\\Profiles');
 
-    unreal.checkModLoaderInfoRoot(unreal_path)
+    unreal.checkModLoaderInfoRoot(unreal_path);
     unreal.checkModLoader(unreal_path_core + '\\ModLoaderInfo.ini');
+    return unreal_remote_info.version;
 }
 
 
@@ -157,8 +158,6 @@ async function loadMainWindow() {
 
     const ses = mainWindow.webContents.session;
     ses.clearCache();
-
-    await checkUnrealModLoader();
 
     let remote_mods_list = await networking.get('https://raw.githubusercontent.com/tsukasaroot/longvinter-mods/main/modules-list.json');
     await scanDirectories(mainWindow, remote_mods_list, config.data.pathtogame);
@@ -246,4 +245,9 @@ ipcMain.on('shell:open', () => {
     const pageDirectory = __dirname.replace('app.asar', 'app.asar.unpacked')
     const pagePath = path.join('file://', pageDirectory, 'index.html')
     shell.openExternal(pagePath)
+})
+
+ipcMain.on('unrealmodloader-check', async (event, arg) => {
+    let version = await checkUnrealModLoader();
+    event.reply('unrealmodloader-check', version);
 })
