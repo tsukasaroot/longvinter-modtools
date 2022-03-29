@@ -112,7 +112,6 @@ function scanDirectories(mainWindow, remote_mods_list, path) {
 }
 
 async function getUnrealModLoader(url, path) {
-    console.log(url)
     let updater = new Updater(url, path);
     let manifest = await updater.getManifest();
     await updater.coreDownloadManifestFiles('unrealmodloader', manifest.files);
@@ -120,7 +119,22 @@ async function getUnrealModLoader(url, path) {
 
 async function createProfileFolder(pathToProfile)
 {
+    let profileToWrite = "#Games Basic Information\n" +
+        "[GameInfo]\n" +
+        "\n" +
+        "#Set to 1 (true) if the games engine version is 4.23 and up\n" +
+        "UsesFNamePool=1\n" +
+        "\n" +
+        "#Set to 1 (true) if the game engine version is 4.18 and up (this can vary)\n" +
+        "IsUsingFChunkedFixedUObjectArray=1\n" +
+        "\n" +
+        "#Fallback if Spawn Actor can't be found or refuses to work. You should almost NEVER use.\n" +
+        "IsUsingDeferedSpawn=0\n" +
+        "\n" +
+        "#UE4.22 changes the namepool weird, only set this to 1 if the game uses 4.22\n" +
+        "#IsUsing4_22=0";
 
+    fs.writeFileSync(pathToProfile, profileToWrite);
 }
 
 async function checkUnrealModLoader() {
@@ -140,7 +154,6 @@ async function checkUnrealModLoader() {
     let error = false;
 
     if (!fs.existsSync(unreal_path + '\\xinput1_3.dll')) {
-        console.log("xinput")
         error = true;
     }
 
@@ -153,7 +166,6 @@ async function checkUnrealModLoader() {
 
     if (!fs.existsSync(unreal_path_core + '\\UnrealEngineModLauncher.exe')
         || !fs.existsSync(unreal_path_core + '\\UnrealEngineModLoader.dll') || !fs.existsSync(unreal_path_core + '\\module.json')) {
-        console.log(".exe or .dll")
         error = true;
     } else {
         module = JSON.parse(fs.readFileSync(unreal_path_core + '\\module.json' , 'utf8'));
@@ -169,41 +181,11 @@ async function checkUnrealModLoader() {
 
     if (fs.existsSync(unreal_path_core + '\\Profiles')) {
         if (!fs.existsSync(unreal_path_core + '\\Profiles\\Longvinter-Win64-Shipping.profile')) {
-            let profileToWrite = "#Games Basic Information\n" +
-                "[GameInfo]\n" +
-                "\n" +
-                "#Set to 1 (true) if the games engine version is 4.23 and up\n" +
-                "UsesFNamePool=1\n" +
-                "\n" +
-                "#Set to 1 (true) if the game engine version is 4.18 and up (this can vary)\n" +
-                "IsUsingFChunkedFixedUObjectArray=1\n" +
-                "\n" +
-                "#Fallback if Spawn Actor can't be found or refuses to work. You should almost NEVER use.\n" +
-                "IsUsingDeferedSpawn=0\n" +
-                "\n" +
-                "#UE4.22 changes the namepool weird, only set this to 1 if the game uses 4.22\n" +
-                "#IsUsing4_22=0";
-
-            fs.writeFileSync(unreal_path_core + '\\Profiles\\Longvinter-Win64-Shipping.profile', profileToWrite);
+            await createProfileFolder(unreal_path_core + '\\Profiles\\Longvinter-Win64-Shipping.profile');
         }
     } else {
         fs.mkdirSync(unreal_path_core + '\\Profiles');
-        let profileToWrite = "#Games Basic Information\n" +
-            "[GameInfo]\n" +
-            "\n" +
-            "#Set to 1 (true) if the games engine version is 4.23 and up\n" +
-            "UsesFNamePool=1\n" +
-            "\n" +
-            "#Set to 1 (true) if the game engine version is 4.18 and up (this can vary)\n" +
-            "IsUsingFChunkedFixedUObjectArray=1\n" +
-            "\n" +
-            "#Fallback if Spawn Actor can't be found or refuses to work. You should almost NEVER use.\n" +
-            "IsUsingDeferedSpawn=0\n" +
-            "\n" +
-            "#UE4.22 changes the namepool weird, only set this to 1 if the game uses 4.22\n" +
-            "#IsUsing4_22=0";
-
-        fs.writeFileSync(unreal_path_core + '\\Profiles\\Longvinter-Win64-Shipping.profile', profileToWrite);
+        await createProfileFolder(unreal_path_core + '\\Profiles\\Longvinter-Win64-Shipping.profile');
     }
 
     if (error || module.version !== unreal_remote_info.version) {
