@@ -40,7 +40,7 @@ window.onload = async function () {
 
 function add_game_path(t) {
     jQuery('#modal').modal('hide');
-    let game_path = path.dirname(document.getElementById('path').files[0].path) + '\\Longvinter\\Content\\CoreMods\\';
+    let game_path = path.dirname(document.getElementById('path').files[0].path) + '\\Longvinter\\Content\\';
     ipcRenderer.send('add-game-path', game_path);
 }
 

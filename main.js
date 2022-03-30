@@ -1,5 +1,5 @@
 'use strict';
-const {app, BrowserWindow, ipcMain, shell, globalShortcut} = require('electron');
+const {app, BrowserWindow, ipcMain, shell, globalShortcut, dialog} = require('electron');
 const path = require('path');
 const fs = require('fs');
 const {autoUpdater} = require('electron-updater');
@@ -73,20 +73,29 @@ function getMods(path, content) {
  * load html file with args stringify when needed, and send them through querystring
  */
 
-function scanDirectories(mainWindow, remote_mods_list, path) {
-    if (path !== "") {
-        let coremods_path = path + 'CoreMods\\';
-        let paks_path = path + 'Paks\\';
-
-        let CoreMods = fs.readdirSync(coremods_path);
-        let Paks = fs.readdirSync(paks_path);
-
+function scanDirectories(mainWindow, remote_mods_list, pathToFiles) {
+    if (pathToFiles !== "") {
+        let coremods_path = pathToFiles + 'CoreMods\\';
+        let paks_path = pathToFiles + 'Paks\\';
         let all_mods = [];
+        let CoreMods;
+        let Paks;
+
+        try {
+            CoreMods = fs.readdirSync(coremods_path);
+            Paks = fs.readdirSync(paks_path);
+        } catch (e) {
+            dialog.showErrorBox(e);
+        }
+
+        console.log(CoreMods)
+        console.log(Paks)
 
         all_mods = all_mods.concat(getMods(coremods_path, CoreMods));
         all_mods = all_mods.concat(getMods(paks_path, Paks));
 
-        mainWindow.loadFile("public/index.html", {
+
+        mainWindow.loadFile(path.join(__dirname, 'public/index.html'), {
             query: {
                 "data": JSON.stringify(all_mods),
                 "version": app.getVersion(),
@@ -94,7 +103,7 @@ function scanDirectories(mainWindow, remote_mods_list, path) {
             }
         });
     } else {
-        mainWindow.loadFile("public/index.html", {
+        mainWindow.loadFile(path.join(__dirname, 'public/index.html'), {
             query: {
                 "error": "No path defined",
                 "version": app.getVersion()
