@@ -55,15 +55,17 @@ if (!gotTheLock) {
     })
 }
 
-/**
- * Retrieve all directories from given path and return it through callback
- */
-
-function getDirectories(path, callback) {
-    fs.readdir(path, function (err, content) {
-        if (err) return callback(err);
-        callback(null, content);
-    })
+function getMods(path, content) {
+    let all_mods = [];
+    if (content != null)
+        for (const folder of content) {
+            let file = path + folder + '/module.json';
+            if (fs.existsSync(file)) {
+                let text = fs.readFileSync(file, 'utf8');
+                all_mods.push(text);
+            }
+        }
+    return all_mods;
 }
 
 /**
@@ -73,25 +75,23 @@ function getDirectories(path, callback) {
 
 function scanDirectories(mainWindow, remote_mods_list, path) {
     if (path !== "") {
-        getDirectories(path, function (err, content) {
-            let all_mods = [];
+        let coremods_path = path + 'CoreMods\\';
+        let paks_path = path + 'Paks\\';
 
-            if (content != null)
-                for (const folder of content) {
-                    let file = path + folder + '/module.json';
-                    if (fs.existsSync(file)) {
-                        let text = fs.readFileSync(file, 'utf8');
-                        all_mods.push(text);
-                    }
-                }
+        let CoreMods = fs.readdirSync(coremods_path);
+        let Paks = fs.readdirSync(paks_path);
 
-            mainWindow.loadFile("public/index.html", {
-                query: {
-                    "data": JSON.stringify(all_mods),
-                    "version": app.getVersion(),
-                    "remote_mods_list": JSON.stringify(remote_mods_list),
-                }
-            });
+        let all_mods = [];
+
+        all_mods = all_mods.concat(getMods(coremods_path, CoreMods));
+        all_mods = all_mods.concat(getMods(paks_path, Paks));
+
+        mainWindow.loadFile("public/index.html", {
+            query: {
+                "data": JSON.stringify(all_mods),
+                "version": app.getVersion(),
+                "remote_mods_list": JSON.stringify(remote_mods_list),
+            }
         });
     } else {
         mainWindow.loadFile("public/index.html", {
@@ -188,13 +188,18 @@ async function retrieval(args, mp) {
     args = JSON.parse(args);
     let updater = new Updater(args.servers[0], mp);
     let manifest = await updater.getManifest();
-    await updater.downloadManifestFiles(args.name.toLowerCase(), manifest.files);
+    await updater.downloadManifestFiles(args.name.toLowerCase(), args.category, manifest.files);
 }
 
 async function uninstall(args) {
     args = JSON.parse(args);
 
-    fs.rmSync(config.data.pathtogame + args.name.toLowerCase(), {recursive: true, force: true});
+    if (args.category === 'coremods')
+        args.category = 'CoreMods';
+    if (args.category === 'paks')
+        args.category = 'Paks';
+
+    fs.rmSync(config.data.pathtogame + args.category + '\\' + args.name.toLowerCase(), {recursive: true, force: true});
 }
 
 app.disableHardwareAcceleration();

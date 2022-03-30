@@ -68,15 +68,17 @@ function create_table(table, value, is_remote) {
     let cell1 = row.insertCell(1);
     let cell2 = row.insertCell(2);
     let cell3 = row.insertCell(3);
+    let cell4 = row.insertCell(4);
 
     cell1.innerHTML = value.version;
     cell2.innerHTML = value.description;
     cell3.innerHTML = value.author;
+    cell4.innerHTML = value.category;
 
     if (is_remote) {
         add_download_button(value.name, row, is_remote);
     } else {
-        let cell4 = document.createElement('td');
+        let cell5 = document.createElement('td');
         let button = document.createElement('button');
         button.onclick = () => {
             uninstall(value.name.toLowerCase(), button);
@@ -87,13 +89,14 @@ function create_table(table, value, is_remote) {
         button.style.background = 'none';
         button.style.padding = '0';
 
-        cell4.appendChild(button)
-        row.appendChild(cell4);
+        cell5.appendChild(button)
+        row.appendChild(cell5);
     }
 }
 
 /**
-/ Find given mod name into a list of Object containing mods informations
+ * Find given mod name into a list of Object containing mods informations
+ * Return false if mod exist locally, else return true
  */
 
 function find_mod_in_list(haystack, list) {
@@ -117,7 +120,8 @@ async function parse_remote_mods(mods_list, remote_mods_list) {
     for (let [key, url] of Object.entries(remote_mods_list)) {
         let mod = await httpGet(url)
         if (find_mod_in_list(key, mods_list)) {
-            create_table(table, mod, true);
+            if (mod.hasOwnProperty('category'))
+                create_table(table, mod, true);
         } else {
             counter++;
         }
