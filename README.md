@@ -12,4 +12,6 @@ Mods that uses resources (Like minimap which load maps from .png) needs some ext
 
 If you are a mod creator go check here : https://github.com/tsukasaroot/longvinter-mods
 
+Also thanks to everyone that tested the software and gave me feedbacks on it!
+
 ![alt text](https://github.com/tsukasaroot/longvinter-modtools/blob/master/readme-pics/img.png?raw=true)
