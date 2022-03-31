@@ -6,6 +6,7 @@ Look forward to what's going to come:
   - Searchbar to look for available mods based on keywords
   - Protocols to handle modtools://args (Prob could be coupled with a way from servers to automatically download mods)
   - Handle issue where a mod repo is deleted so fetch json fails
+  - i18n
 
 Mods that uses resources (Like minimap which load maps from .png) needs some extrawork from creator to handle subfolders in CoreMods folder as mods files are contain in mod_name/mod_files.
 
