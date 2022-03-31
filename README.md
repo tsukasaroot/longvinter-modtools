@@ -1,8 +1,6 @@
 # longvinter-modtools
 Application to automatically install and handle updates of mods
 
-Doc to come when stable release will be done
-
 Look forward to what's going to come:
   - Checksum of updates / installations of mods to prevent any corrupted files
   - Searchbar to look for available mods based on keywords
