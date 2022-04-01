@@ -131,7 +131,7 @@ async function checkUnrealModLoader() {
     const unreal = new UnrealModLoader();
 
     unreal_path = unreal.pop_array(unreal_path, 3);
-    unreal_path = path.join.apply(null, unreal_path) + '\\Binaries\\Win64';
+    unreal_path = path.join.apply(null, unreal_path) + '\\Longvinter\\Binaries\\Win64';
 
     let unreal_path_core = unreal_path + '\\unrealmodloader';
 
@@ -251,6 +251,10 @@ ipcMain.on('refresh', () => {
 
 ipcMain.on('add-game-path', (event, path) => {
     config.setConfig('pathtogame', path);
+    console.log(path + 'CoreMods')
+    if (!fs.existsSync(path + 'CoreMods')) {
+        fs.mkdirSync(path + 'CoreMods');
+    }
     event.reply('add-game-path');
 })
 

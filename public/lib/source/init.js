@@ -21,7 +21,8 @@ window.jQuery = require('jquery');
 window.onload = async function () {
     storage.clear();
 
-    ipcRenderer.send('unrealmodloader-check');
+    if (!query['?error'])
+        ipcRenderer.send('unrealmodloader-check');
 
     if (mods_list !== null)
         parse_mods(mods_list);
