@@ -32,6 +32,36 @@ window.onload = async function () {
         check_local_mod_versions(mods_list);
 
     if (query['?error']) {
+        document.getElementById('modal-title').innerText = 'Select path to Longvinter';
+        let content = document.getElementById('modal-content');
+
+        let form = document.createElement('form');
+        form.onsubmit = () => {
+            add_game_path(this);
+        };
+
+        let label = document.createElement('label');
+        let input = document.createElement('input');
+        let button = document.createElement('button');
+
+        label.innerText = 'Enter the path to your game longvinter.exe:';
+        label.htmlFor = 'path';
+
+        input.type = 'file';
+        input.id = 'path';
+        input.className = 'mb-3';
+
+        button.className = 'btn btn-primary';
+        button.innerText = 'Validate';
+
+        form.appendChild(label);
+        form.innerHTML += '<br />';
+        form.appendChild(input);
+        form.innerHTML += '<br />';
+        form.appendChild(button);
+        form.innerHTML += '<br />';
+        content.appendChild(form);
+
         jQuery('#modal').modal('show');
     }
 

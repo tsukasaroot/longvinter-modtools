@@ -85,11 +85,8 @@ function scanDirectories(mainWindow, remote_mods_list, pathToFiles) {
             CoreMods = fs.readdirSync(coremods_path);
             Paks = fs.readdirSync(paks_path);
         } catch (e) {
-            dialog.showErrorBox(e);
+            dialog.showErrorBox('error', e);
         }
-
-        console.log(CoreMods)
-        console.log(Paks)
 
         all_mods = all_mods.concat(getMods(coremods_path, CoreMods));
         all_mods = all_mods.concat(getMods(paks_path, Paks));
@@ -197,7 +194,7 @@ async function retrieval(args, mp) {
     args = JSON.parse(args);
     let updater = new Updater(args.servers[0], mp);
     let manifest = await updater.getManifest();
-    await updater.downloadManifestFiles(args.name.toLowerCase(), args.category, manifest.files);
+    return await updater.downloadManifestFiles(args.name.toLowerCase(), args.category, manifest.files);
 }
 
 async function uninstall(args) {
@@ -230,13 +227,13 @@ ipcMain.on('restart_app', () => {
 });
 
 ipcMain.on('update', async (event, args) => {
-    await retrieval(args, config.data.pathtogame);
-    event.reply('update', args);
+    let response = await retrieval(args, config.data.pathtogame);
+    event.reply('update', args, response);
 });
 
 ipcMain.on('install', async (event, args) => {
-    await retrieval(args, config.data.pathtogame);
-    event.reply('install', args);
+    let response = await retrieval(args, config.data.pathtogame);
+    event.reply('install', args, response);
 });
 
 ipcMain.on('uninstall', async (event, args) => {

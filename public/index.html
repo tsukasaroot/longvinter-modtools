@@ -149,18 +149,16 @@
             integrity="sha512-6PM0qYu5KExuNcKt5bURAoT6KCThUmHRewN3zUFNaoI6Di7XJPTMoT6K0nsagZKk2OB4L7E3q1uQKHNHd4stIQ=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
+    <!-- Here we have template of modal -->
     <div id="modal" class="modal" tabindex="0" role="dialog">
         <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
             <div class="modal-content">
                 <div class="modal-header bg-dark">
-                    <h5 id="modalTitle" class="modal-title bg-dark text-light">Select path to Longvinter</h5>
+                    <h5 id="modal-title" class="modal-title bg-dark text-light"></h5>
                 </div>
                 <div class="modal-body bg-dark text-light">
-                        <form onsubmit="add_game_path(this); return false">
-                            <label for="path">Enter the path to your game longvinter.exe: </label><br />
-                            <input id="path" type="file" class="mb-3" /><br />
-                            <button class="btn btn-primary">Validate</button>
-                        </form>
+                    <div id="modal-content">
+                    </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     </div>
