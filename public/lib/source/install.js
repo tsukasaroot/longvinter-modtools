@@ -45,15 +45,19 @@ ipcRenderer.on('install', (event, args, response) => {
     let modal = document.getElementById('modal');
     modal.style.height = '40%';
     modal.style.width = '40%';
+    modal.style.marginLeft = '30%';
 
     document.getElementById('modal-title').innerText = 'Mods status';
     let content = document.getElementById('modal-content');
     let text = document.createElement('p');
+    text.style.textAlign = 'center';
     text.innerText = args.name + ' is installed correctly!';
 
     content.appendChild(text);
 
-    jQuery('#modal').modal('show');
+    jQuery('#modal').modal('show').on('hidden.bs.modal', () => {
+        document.getElementById('modal-content').innerText = '';
+    });
 
     create_table(table, args, false);
 });

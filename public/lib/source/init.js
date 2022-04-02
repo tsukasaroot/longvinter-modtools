@@ -21,8 +21,7 @@ window.jQuery = require('jquery');
 window.onload = async function () {
     storage.clear();
 
-    if (!query['?error'])
-        ipcRenderer.send('unrealmodloader-check');
+    openTab('mods-installed', document.getElementsByClassName('nav-item')[0].children[0]);
 
     if (mods_list !== null)
         parse_mods(mods_list);
@@ -65,8 +64,10 @@ window.onload = async function () {
         jQuery('#modal').modal('show');
     }
 
+    if (!query['?error'])
+        ipcRenderer.send('unrealmodloader-check');
+
     document.getElementById('version').innerText += ' ' + ver;
-    openTab('mods-installed', document.getElementsByClassName('nav-item')[0].children[0]);
 }
 
 function add_game_path(t) {
