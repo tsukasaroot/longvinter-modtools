@@ -31,7 +31,7 @@ ipcRenderer.on('uninstall', (event, args) => {
     const table_remote = document.getElementById('remote-mods-list').getElementsByTagName('tbody')[0];
 
     let counter_remote = document.getElementById('remote-mods-count');
-    let cleaned_counter_remote = counter.innerHTML.replace(/[^0-9]/g,'');
+    let cleaned_counter_remote = counter_remote.innerHTML.replace(/[^0-9]/g,'');
 
     cleaned_counter_remote++;
     counter_remote.innerHTML = 'Available mods: ' + cleaned_counter_remote;

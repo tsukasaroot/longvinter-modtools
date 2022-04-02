@@ -42,6 +42,10 @@ ipcRenderer.on('install', (event, args, response) => {
     cleaned_counter++;
     counter.innerHTML = 'Installed mods: ' + cleaned_counter;
 
+    let modal = document.getElementById('modal');
+    modal.style.height = '40%';
+    modal.style.width = '40%';
+
     document.getElementById('modal-title').innerText = 'Mods status';
     let content = document.getElementById('modal-content');
     let text = document.createElement('p');
