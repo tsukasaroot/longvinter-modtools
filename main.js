@@ -91,13 +91,14 @@ function scanDirectories(mainWindow, remote_mods_list, pathToFiles) {
         all_mods = all_mods.concat(getMods(coremods_path, CoreMods));
         all_mods = all_mods.concat(getMods(paks_path, Paks));
 
-        mainWindow.loadFile(path.join(__dirname, 'public/index.html'), {
+        /*mainWindow.loadFile(path.join(__dirname, 'public/index.html'), {
             query: {
                 "data": JSON.stringify(all_mods),
                 "version": app.getVersion(),
                 "remote_mods_list": JSON.stringify(remote_mods_list),
             }
-        });
+        });*/
+        mainWindow.webContents.send('init', all_mods, remote_mods_list);
     } else {
         mainWindow.loadFile(path.join(__dirname, 'public/index.html'), {
             query: {
@@ -163,8 +164,14 @@ async function loadMainWindow() {
     const ses = mainWindow.webContents.session;
     ses.clearCache();
 
-    let remote_mods_list = await networking.get('https://raw.githubusercontent.com/tsukasaroot/longvinter-mods/main/modules-list.json');
-    await scanDirectories(mainWindow, remote_mods_list, config.data.pathtogame);
+    //let remote_mods_list = await networking.get('https://raw.githubusercontent.com/tsukasaroot/longvinter-mods/main/modules-list.json');
+    //await scanDirectories(mainWindow, remote_mods_list, config.data.pathtogame);
+
+    mainWindow.loadFile(path.join(__dirname, 'public/index.html'), {
+        query: {
+            "version": app.getVersion()
+        }
+    });
 
     mainWindow.once('ready-to-show', () => {
         autoUpdater.checkForUpdatesAndNotify();
@@ -268,3 +275,8 @@ ipcMain.on('unrealmodloader-check', async (event, arg) => {
     let version = await checkUnrealModLoader();
     event.reply('unrealmodloader-check', version);
 })
+
+ipcMain.on('init', async () => {
+    let remote_mods_list = await networking.get('https://raw.githubusercontent.com/tsukasaroot/longvinter-mods/main/modules-list.json');
+    await scanDirectories(mainWindow, remote_mods_list, config.data.pathtogame);
+});

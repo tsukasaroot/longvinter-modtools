@@ -1,14 +1,14 @@
 const querystring = require('querystring');
 const path = require("path")
 let query = querystring.parse(global.location.search);
-let mods_list = "";
+/*let mods_list = "";
 let remote_mods_list = "";
 
 if (query['?data'])
     mods_list = JSON.parse(query['?data']);
 
 if (query['remote_mods_list'])
-    remote_mods_list = JSON.parse(query['remote_mods_list']);
+    remote_mods_list = JSON.parse(query['remote_mods_list']);*/
 
 let ver = query['version'];
 
@@ -23,6 +23,26 @@ window.onload = async function () {
 
     openTab('mods-installed', document.getElementsByClassName('nav-item')[0].children[0]);
 
+    ipcRenderer.send('init');
+    
+    document.getElementById('version').innerText += ' ' + ver;
+}
+
+function add_game_path(t) {
+    jQuery('#modal').modal('hide');
+    let game_path = path.dirname(document.getElementById('path').files[0].path) + '\\Longvinter\\Content\\';
+    ipcRenderer.send('add-game-path', game_path);
+}
+
+ipcRenderer.on('unrealmodloader-check', (event, version) => {
+    document.getElementById('unreal-version').innerText += ' ' + version;
+});
+
+ipcRenderer.on('add-game-path', () => {
+    ipcRenderer.send('refresh');
+});
+
+ipcRenderer.on('init', async (event, mods_list, remote_mods_list, error) => {
     if (mods_list !== null)
         parse_mods(mods_list);
     if (mods_list !== null && remote_mods_list !== null)
@@ -30,7 +50,7 @@ window.onload = async function () {
     if (mods_list !== null)
         check_local_mod_versions(mods_list);
 
-    if (query['?error']) {
+    if (error === null) {
         document.getElementById('modal-title').innerText = 'Select path to Longvinter';
         let content = document.getElementById('modal-content');
 
@@ -66,20 +86,4 @@ window.onload = async function () {
 
     if (!query['?error'])
         ipcRenderer.send('unrealmodloader-check');
-
-    document.getElementById('version').innerText += ' ' + ver;
-}
-
-function add_game_path(t) {
-    jQuery('#modal').modal('hide');
-    let game_path = path.dirname(document.getElementById('path').files[0].path) + '\\Longvinter\\Content\\';
-    ipcRenderer.send('add-game-path', game_path);
-}
-
-ipcRenderer.on('unrealmodloader-check', (event, version) => {
-    document.getElementById('unreal-version').innerText += ' ' + version;
-});
-
-ipcRenderer.on('add-game-path', () => {
-    ipcRenderer.send('refresh');
 });
