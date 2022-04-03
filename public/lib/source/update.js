@@ -15,7 +15,7 @@ function update(mod_name, t) {
 * Then we add mod informations into mods-list and update the linked mods-count
  */
 
-ipcRenderer.on('update', (event, args) => {
+ipcRenderer.on('update', (event, args, response) => {
     args = JSON.parse(args);
     const row = document.getElementById(args.name.toLowerCase());
 

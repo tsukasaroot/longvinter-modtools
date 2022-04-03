@@ -120,11 +120,18 @@
     <footer class="bg-dark text-white btn-outline-light form-white text-center fixed-bottom">
         <div id="notification" class="hidden bg-dark text-light">
             <p id="message"></p>
-            <button id="close-button" onClick="closeNotification()">
+            <button id="close-button" onClick="closeNotification(this)">
                 Close
             </button>
             <button id="restart-button" onClick="restartApp()" class="hidden">
                 Restart
+            </button>
+        </div>
+
+        <div id="error" class="hidden bg-dark text-light">
+            <p id="error-message"></p>
+            <button onClick="closeNotification(this)">
+                Close
             </button>
         </div>
 
@@ -152,7 +159,7 @@
     <!-- Here we have template of modal -->
     <div id="modal" class="modal" tabindex="0" role="dialog">
         <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
-            <div class="modal-content">
+            <div class="modal-content rounded-4">
                 <div class="modal-header bg-dark">
                     <h5 id="modal-title" class="modal-title bg-dark text-light"></h5>
                 </div>

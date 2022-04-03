@@ -91,7 +91,6 @@ function scanDirectories(mainWindow, remote_mods_list, pathToFiles) {
         all_mods = all_mods.concat(getMods(coremods_path, CoreMods));
         all_mods = all_mods.concat(getMods(paks_path, Paks));
 
-
         mainWindow.loadFile(path.join(__dirname, 'public/index.html'), {
             query: {
                 "data": JSON.stringify(all_mods),
@@ -142,7 +141,6 @@ async function checkUnrealModLoader() {
     unreal.checkModLoader(unreal_path_core + '\\ModLoaderInfo.ini');
     return unreal_remote_info.version;
 }
-
 
 /**
  * Create the window

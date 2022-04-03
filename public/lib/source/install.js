@@ -9,25 +9,6 @@ function install(mod_name, t) {
     ipcRenderer.send('install', storage.getItem(mod_name.toLowerCase()));
 }
 
-function createModal(title, value) {
-    let modal = document.getElementById('modal');
-    modal.style.height = '40%';
-    modal.style.width = '40%';
-    modal.style.marginLeft = '30%';
-
-    document.getElementById('modal-title').innerText = title;
-    let content = document.getElementById('modal-content');
-    let text = document.createElement('p');
-    text.style.textAlign = 'center';
-    text.innerText = value;
-
-    content.appendChild(text);
-
-    jQuery('#modal').modal('show').on('hidden.bs.modal', () => {
-        document.getElementById('modal-content').innerText = '';
-    });
-}
-
 /*
 * After main process installed mod, it sends back a response with mod informations
 * We delete mod from remote-mods-list and update remote-mods-count
@@ -42,9 +23,13 @@ ipcRenderer.on('install', (event, args, response) => {
         const row = document.getElementById(args.name.toLowerCase());
 
         row.children[1].innerHTML = JSON.parse(storage.getItem(args.name.toLowerCase())).version;
-        row.children[5].innerHTML = '<i class="fa fa-cloud-download"></i>';
 
-        createModal('mods status', args.name + ' installation went wrong!');
+        document.getElementById('error').classList.remove('hidden');
+        document.getElementById('error-message').innerText = 'An error happened at installation';
+        document.getElementById('error-message').style.color = 'red';
+
+        row.removeChild(row.children[5]);
+        add_download_button(args.name, row, true);
         return;
     }
 
@@ -66,8 +51,6 @@ ipcRenderer.on('install', (event, args, response) => {
 
     cleaned_counter++;
     counter.innerHTML = 'Installed mods: ' + cleaned_counter;
-
-    createModal('mods status', args.name + ' is installed correctly!');
 
     create_table(table, args, false);
 });
