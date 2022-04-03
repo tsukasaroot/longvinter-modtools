@@ -195,6 +195,11 @@ async function retrieval(args, mp) {
     return await updater.downloadManifestFiles(args.name.toLowerCase(), args.category, manifest.files);
 }
 
+/**
+ * Called by uninstall ipcMain to remove a mod on user machine
+ * arg is a stringify JSON containing the mod's informations
+ */
+
 async function uninstall(args) {
     args = JSON.parse(args);
 
@@ -253,7 +258,6 @@ ipcMain.on('add-game-path', (event, path) => {
     event.reply('add-game-path');
 })
 
-// Handle window controls via IPC
 ipcMain.on('shell:open', () => {
     const pageDirectory = __dirname.replace('app.asar', 'app.asar.unpacked')
     const pagePath = path.join('file://', pageDirectory, 'index.html')
