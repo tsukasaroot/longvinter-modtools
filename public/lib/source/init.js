@@ -1,16 +1,8 @@
 const querystring = require('querystring');
 const path = require("path")
+
 let query = querystring.parse(global.location.search);
-/*let mods_list = "";
-let remote_mods_list = "";
-
-if (query['?data'])
-    mods_list = JSON.parse(query['?data']);
-
-if (query['remote_mods_list'])
-    remote_mods_list = JSON.parse(query['remote_mods_list']);*/
-
-let ver = query['version'];
+let ver = query['?version'];
 
 window.jQuery = require('jquery');
 
@@ -24,7 +16,7 @@ window.onload = async function () {
     openTab('mods-installed', document.getElementsByClassName('nav-item')[0].children[0]);
 
     ipcRenderer.send('init');
-    
+
     document.getElementById('version').innerText += ' ' + ver;
 }
 
@@ -50,7 +42,7 @@ ipcRenderer.on('init', async (event, mods_list, remote_mods_list, error) => {
     if (mods_list !== null)
         check_local_mod_versions(mods_list);
 
-    if (error === null) {
+    if (error !== undefined) {
         document.getElementById('modal-title').innerText = 'Select path to Longvinter';
         let content = document.getElementById('modal-content');
 
@@ -84,6 +76,7 @@ ipcRenderer.on('init', async (event, mods_list, remote_mods_list, error) => {
         jQuery('#modal').modal('show');
     }
 
-    if (!query['?error'])
+    if (error === undefined) {
         ipcRenderer.send('unrealmodloader-check');
+    }
 });
