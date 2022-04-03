@@ -25,7 +25,7 @@ ipcRenderer.on('install', (event, args, response) => {
         row.children[1].innerHTML = JSON.parse(storage.getItem(args.name.toLowerCase())).version;
 
         document.getElementById('error').classList.remove('hidden');
-        document.getElementById('error-message').innerText = 'An error happened at installation';
+        document.getElementById('error-message').innerText = 'A checksum error happened during installation';
         document.getElementById('error-message').style.color = 'red';
 
         row.removeChild(row.children[5]);
