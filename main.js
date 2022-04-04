@@ -95,15 +95,6 @@ function scanDirectories(mainWindow, remote_mods_list, pathToFiles) {
         let error = "No path defined";
         mainWindow.webContents.send('init', null, null, error);
     }
-
-    globalShortcut.register('f5', function () {
-        app.relaunch();
-        app.exit(0);
-    });
-    globalShortcut.register('CommandOrControl+R', function () {
-        app.relaunch();
-        app.exit(0);
-    });
 }
 
 async function checkUnrealModLoader() {
