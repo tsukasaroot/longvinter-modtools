@@ -20,7 +20,7 @@ window.onload = async function () {
     document.getElementById('version').innerText += ' ' + ver;
 }
 
-function add_game_path(t) {
+function add_game_path() {
     jQuery('#modal').modal('hide');
     let game_path = path.dirname(document.getElementById('path').files[0].path) + '\\Longvinter\\Content\\';
     ipcRenderer.send('add-game-path', game_path);
@@ -48,7 +48,7 @@ ipcRenderer.on('init', async (event, mods_list, remote_mods_list, error) => {
 
         let form = document.createElement('form');
         form.onsubmit = () => {
-            add_game_path(this);
+            add_game_path();
         };
 
         let label = document.createElement('label');
