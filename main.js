@@ -132,6 +132,8 @@ async function loadMainWindow() {
     mainWindow = new BrowserWindow({
         width: 1200,
         height: 800,
+        show: false,
+        backgroundColor: '#212529',
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false
@@ -141,12 +143,16 @@ async function loadMainWindow() {
     });
 
     const ses = mainWindow.webContents.session;
-    ses.clearCache();
+    await ses.clearCache();
 
     mainWindow.loadFile(path.join(__dirname, 'public/index.html'), {
         query: {
             "version": app.getVersion()
         }
+    });
+
+    mainWindow.webContents.on('did-finish-load', () => {
+        mainWindow.show();
     });
 
     mainWindow.once('ready-to-show', () => {
