@@ -2,7 +2,6 @@
 Application to automatically install and handle updates of mods
 
 Look forward to what's going to come:
-  - Checksum of updates / installations of mods to prevent any corrupted files
   - Searchbar to look for available mods based on keywords
   - Protocols to handle modtools://args (Prob could be coupled with a way from servers to automatically download mods)
   - Handle issue where a mod repo is deleted so fetch json fails
