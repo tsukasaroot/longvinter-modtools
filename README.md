@@ -1,3 +1,5 @@
+DISCONTINUED AS MODDING WAS NOT POSSIBLE ANYMORE AT SOME POINT AND LOST INTEREST IN THE PROJECT AFTERWARD
+
 # longvinter-modtools
 Application to automatically install and handle updates of mods
 
